@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+Магазин: {{store}} <br>
+{% for score in scores %}
+                {{score.balance}}            {{score.cur}} <br>
+{% endfor %}
+
+{% endblock %}

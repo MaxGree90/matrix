@@ -1,0 +1,258 @@
+﻿{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#gen" data-toggle="tab">основные</a></li>
+    <li><a href="#citys" data-toggle="tab">города</a></li>
+    <li><a href="#packings" data-toggle="tab">товар</a></li>
+    <li><a href="#users" data-toggle="tab">пользователи</a></li>
+    <li><a href="#bots" data-toggle="tab">боты</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+    <div class="tab-pane fade in active" id="gen">
+                <div class="row">
+                    <div class="col-md-4">
+                        <br>
+                            {{ wtf.quick_form(form_store) }}
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <br>
+                        Текущая валюта: {{ stcur }}<br>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                  <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_select_cur">Изменение валюты магазина</a>
+                                  </h4>
+                                </div>
+                                <div id="collapse_select_cur" class="panel-collapse collapse">
+                                  <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                             {{ wtf.quick_form(form_select_cur) }}
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                    </div>
+                </div>
+    </div>
+
+<div class="tab-pane fade" id="citys">
+        <table class="table table-sm table-condensed">
+           {% for city in citys %}
+                <tr class="bg-primary">
+                    <td>{{city.title}}</td>
+                    <td></td>
+                    <td><a href="{{ url_for('remove_city', del_city_id=city.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+                </tr>
+                {% for area in areas %}
+                <tr class="bg-info">
+                    {% if area.city_id == city.id %}
+                    <td></td>
+                    <td>{{area.title}}</td>
+                    <td><a href="{{ url_for('remove_area', del_area_id=area.id) }}" class="btn btn-warning btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+           {% endfor %}
+        </table>
+    <br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_city_add">Добавление городов</a>
+      </h4>
+    </div>
+    <div id="collapse_city_add" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">
+                 {{ wtf.quick_form(form_city) }}
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_area_add">Добавление районов</a>
+      </h4>
+    </div>
+    <div id="collapse_area_add" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">
+                 {{ wtf.quick_form(form_area) }}
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-pane fade" id="packings">
+    <table class="table table-sm table-condensed">
+        {% for sort in sorts %}
+                <tr class="bg-primary">
+                    <td>{{sort.title}}</td>
+                    <td></td>
+                    <td></td>
+                    <td><a href="{{ url_for('remove_sort', del_sort_id=sort.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+                </tr>
+                 {% for packing in packings %}
+                    {% if packing.sorts_id == sort.id %}
+                        <tr class="bg-info">
+                            <td></td>
+                            <td>{{packing.title}}</td>
+                            <td></td>
+                            <td><a href="{{ url_for('remove_packing', del_packing_id=packing.id) }}" class="btn btn-warning btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+                        </tr>
+                    {% endif %}
+                    {% for spec_p in spec_prices %}
+                        <tr class="bg-success">
+                            {% if spec_p.packing_id == packing.id and packing.sorts_id == sort.id%}
+                                <td></td>
+                                <td></td>
+                                <td>Спец цена: {{ spec_p.city }} {{spec_p.spec_price}}</td>
+                                <td><a href="{{ url_for('remove_spec_p', del_spec_p_id=spec_p.id) }}" class="btn btn-warning btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+                            {% endif %}
+                        </tr>
+        {% endfor %}
+        {% endfor %}
+        {% endfor %}
+    </table>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_sort_add">Добавление вида товара</a>
+                  </h4>
+                </div>
+                <div id="collapse_sort_add" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                             {{ wtf.quick_form(form_sort) }}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_packing_add">Добавление фасофки</a>
+                  </h4>
+                </div>
+                <div id="collapse_packing_add" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                             {{ wtf.quick_form(form_packing) }}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_spec_p_add">Добавление спец цены</a>
+                  </h4>
+                </div>
+                <div id="collapse_spec_p_add" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                             {{ wtf.quick_form(form_spec_p) }}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+</div>
+
+<div class="tab-pane fade" id="users">
+      <table class="table table-sm table-condensed">
+        <tr>
+            <td>Логин</td>
+            <td>Должность</td>
+            <td>Описание</td>
+            <td>Последний вход</td>
+            <td></td>
+        </tr>
+          {% for user in users %}
+            <tr class="bg-primary">
+                    <td>{{user.username}}</td>
+                    <td>{{user.position}}</td>
+                    <td>{{user.about}}</td>
+                    <td>{{user.last_seen}}</td>
+                    <td><a href="{{ url_for('remove_user', del_user_id=user.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+            </tr>
+            {% endfor %}
+      </table>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_user_add">Добавление пользователей</a>
+                  </h4>
+                </div>
+                <div id="collapse_user_add" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                             {{ wtf.quick_form(form_user) }}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+</div>
+
+<div class="tab-pane fade" id="bots">
+    <table class="table table-sm table-condensed">
+        <tr>
+            <td>Номер телефона</td>
+            <td>Статус бота</td>
+            <td></td>
+        </tr>
+        {% for bot in bots %}
+            <tr class="bg-primary">
+               <td>{{bot.phone_number}}</td>
+               <td>{{bot.bot_state}}</td>
+               <td><a href="{{ url_for('remove_bot', del_bot_id=bot.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_bot_add">Добавление бота</a>
+              </h4>
+            </div>
+            <div id="collapse_bot_add" class="panel-collapse collapse">
+              <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                         {{ wtf.quick_form(form_bot) }}
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+</div>
+
+</div>
+
+{% endblock %}

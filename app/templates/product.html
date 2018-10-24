@@ -1,0 +1,239 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_new">Новые адреса</a>
+      </h4>
+    </div>
+    <div id="collapse_new" class="panel-collapse collapse">
+      <div class="panel-body">
+                 <table class="table table-striped table-bordered table-condensed">
+<tr>
+    <td><div class="checkbox"><label><input type="checkbox" name=g1 class=chk-all></label></td>
+    <td>Город</td>
+    <td>Район</td>
+    <td>Вид товара</td>
+    <td>Фасофка</td>
+    <td>Дата добавления</td>
+    <td>Описание товара</td>
+    <td></td>
+</tr>
+  {% for product in products %}
+    <tr>
+            <td><div class="checkbox"><label><input type="checkbox" name=g1></label></td>
+            <td>{{product.city}}</td>
+            <td>{{product.area}}</td>
+            <td>{{product.sort}}</td>
+            <td>{{product.packing}}</td>
+            <td>{{product.create_date}}</td>
+            <td>{{product.data}}</td>
+            <td><a href="{{ url_for('remove_product', del_product_id=product.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+    </tr>
+    {% endfor %}
+</table>
+      </div>
+    </div>
+  </div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_moderate">Адреса на проверке Оператором</a>
+      </h4>
+    </div>
+    <div id="collapse_moderate" class="panel-collapse collapse">
+      <div class="panel-body">
+                 <table class="table table-striped table-bordered table-condensed">
+<tr>
+    <td><div class="checkbox"><label><input type="checkbox" name=g1 class=chk-all></label></td>
+    <td>Город</td>
+    <td>Район</td>
+    <td>Вид товара</td>
+    <td>Фасофка</td>
+    <td>Дата добавления</td>
+    <td>Описание товара</td>
+    <td></td>
+</tr>
+  {% for product in products %}
+    <tr>
+            <td><div class="checkbox"><label><input type="checkbox" name=g1></label></td>
+            <td>{{product.city}}</td>
+            <td>{{product.area}}</td>
+            <td>{{product.sort}}</td>
+            <td>{{product.packing}}</td>
+            <td>{{product.create_date}}</td>
+            <td>{{product.data}}</td>
+            <td><a href="{{ url_for('remove_product', del_product_id=product.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+    </tr>
+    {% endfor %}
+</table>
+      </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_trade">Продаются</a>
+      </h4>
+    </div>
+    <div id="collapse_trade" class="panel-collapse collapse">
+      <div class="panel-body">
+                 <table class="table table-striped table-bordered table-condensed">
+<tr>
+    <td><div class="checkbox"><label><input type="checkbox" name=g1 class=chk-all></label></td>
+    <td>Город</td>
+    <td>Район</td>
+    <td>Вид товара</td>
+    <td>Фасофка</td>
+    <td>Дата добавления</td>
+    <td>Описание товара</td>
+    <td></td>
+</tr>
+  {% for product in products %}
+    <tr>
+            <td><div class="checkbox"><label><input type="checkbox" name=g1></label></td>
+            <td>{{product.city}}</td>
+            <td>{{product.area}}</td>
+            <td>{{product.sort}}</td>
+            <td>{{product.packing}}</td>
+            <td>{{product.create_date}}</td>
+            <td>{{product.data}}</td>
+            <td><a href="{{ url_for('remove_product', del_product_id=product.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+    </tr>
+    {% endfor %}
+</table>
+      </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_add_product">Добавление адресов</a>
+      </h4>
+    </div>
+    <div id="collapse_add_product" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">
+                 {{ wtf.quick_form(form_add) }}
+                    <script type="text/javascript">
+                        function choice_category(){
+                            var tmp_id = parseInt ($("#city_select").val());
+                            if(tmp_id == 0)
+                            {
+                                $("#area_select").attr('disabled', 'disabled');
+                            }
+                            else
+                            {
+                                $("#area_select").removeAttr('disabled');
+                                load_subcategory();
+                            }
+                        }
+
+                        function choice_category_sort(){
+                            var tmp_id = parseInt ($("#sort_select").val());
+                            if(tmp_id == 0)
+                            {
+                                $("#packing_select").attr('disabled', 'disabled');
+                            }
+                            else
+                            {
+                                $("#packing_select").removeAttr('disabled');
+                                load_subcategory_sort();
+                            }
+                        }
+
+                        function load_subcategory(){
+                            $.ajax({
+                                type: "POST",
+                                url: "/get_area_select",
+                                data: $('form').serialize(),
+                                success: function(response) {
+                                    var json = jQuery.parseJSON(response)
+                                    obj = Object.keys(json)
+
+                                    $("#area_select")
+                                        .find('option')
+                                        .remove()
+                                        .end()
+                                        .append('<option value="0">Не выбран</option>')
+                                        .val('0');
+
+                                    var value, key;
+                                    for(item in obj){
+                                        value = json[obj[item]];
+                                        key = obj[item];
+                                    $("#area_select").append($("<option></option>")
+                                            .attr("value",key)
+                                            .text(value));
+                                    }
+
+                                },
+                            error: function(error) {
+                                console.log(error);
+                            }
+                        });
+                        }
+                        function load_subcategory_sort(){
+                            $.ajax({
+                                type: "POST",
+                                url: "/get_packing_select",
+                                data: $('form').serialize(),
+                                success: function(response) {
+                                    var json = jQuery.parseJSON(response)
+                                    obj = Object.keys(json)
+
+                                    $("#packing_select")
+                                        .find('option')
+                                        .remove()
+                                        .end()
+                                        .append('<option value="0">Не выбран</option>')
+                                        .val('0');
+
+                                    var value, key;
+                                    for(item in obj){
+                                        value = json[obj[item]];
+                                        key = obj[item];
+                                    $("#packing_select").append($("<option></option>")
+                                            .attr("value",key)
+                                            .text(value));
+                                    }
+
+                                },
+                            error: function(error) {
+                                console.log(error);
+                            }
+                        });
+                        }
+
+                        $(document).ready(function() {
+                            choice_category();
+                            choice_category_sort();
+                            $("#city_select").change(function() {
+                                choice_category();
+                            });
+
+                            $("#area_select").change(function() {
+                            });
+                            $("#sort_select").change(function() {
+                                choice_category_sort();
+                            });
+                            $("#packing_select").change(function() {
+                            });
+                        });
+                    </script>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
