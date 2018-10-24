@@ -3,115 +3,6 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
 
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_new">Новые адреса</a>
-      </h4>
-    </div>
-    <div id="collapse_new" class="panel-collapse collapse">
-      <div class="panel-body">
-                 <table class="table table-striped table-bordered table-condensed">
-<tr>
-    <td><div class="checkbox"><label><input type="checkbox" name=g1 class=chk-all></label></td>
-    <td>Город</td>
-    <td>Район</td>
-    <td>Вид товара</td>
-    <td>Фасофка</td>
-    <td>Дата добавления</td>
-    <td>Описание товара</td>
-    <td></td>
-</tr>
-  {% for product in products %}
-    <tr>
-            <td><div class="checkbox"><label><input type="checkbox" name=g1></label></td>
-            <td>{{product.city}}</td>
-            <td>{{product.area}}</td>
-            <td>{{product.sort}}</td>
-            <td>{{product.packing}}</td>
-            <td>{{product.create_date}}</td>
-            <td>{{product.data}}</td>
-            <td><a href="{{ url_for('remove_product', del_product_id=product.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
-    </tr>
-    {% endfor %}
-</table>
-      </div>
-    </div>
-  </div>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_moderate">Адреса на проверке Оператором</a>
-      </h4>
-    </div>
-    <div id="collapse_moderate" class="panel-collapse collapse">
-      <div class="panel-body">
-                 <table class="table table-striped table-bordered table-condensed">
-<tr>
-    <td><div class="checkbox"><label><input type="checkbox" name=g1 class=chk-all></label></td>
-    <td>Город</td>
-    <td>Район</td>
-    <td>Вид товара</td>
-    <td>Фасофка</td>
-    <td>Дата добавления</td>
-    <td>Описание товара</td>
-    <td></td>
-</tr>
-  {% for product in products %}
-    <tr>
-            <td><div class="checkbox"><label><input type="checkbox" name=g1></label></td>
-            <td>{{product.city}}</td>
-            <td>{{product.area}}</td>
-            <td>{{product.sort}}</td>
-            <td>{{product.packing}}</td>
-            <td>{{product.create_date}}</td>
-            <td>{{product.data}}</td>
-            <td><a href="{{ url_for('remove_product', del_product_id=product.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
-    </tr>
-    {% endfor %}
-</table>
-      </div>
-    </div>
-</div>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_trade">Продаются</a>
-      </h4>
-    </div>
-    <div id="collapse_trade" class="panel-collapse collapse">
-      <div class="panel-body">
-                 <table class="table table-striped table-bordered table-condensed">
-<tr>
-    <td><div class="checkbox"><label><input type="checkbox" name=g1 class=chk-all></label></td>
-    <td>Город</td>
-    <td>Район</td>
-    <td>Вид товара</td>
-    <td>Фасофка</td>
-    <td>Дата добавления</td>
-    <td>Описание товара</td>
-    <td></td>
-</tr>
-  {% for product in products %}
-    <tr>
-            <td><div class="checkbox"><label><input type="checkbox" name=g1></label></td>
-            <td>{{product.city}}</td>
-            <td>{{product.area}}</td>
-            <td>{{product.sort}}</td>
-            <td>{{product.packing}}</td>
-            <td>{{product.create_date}}</td>
-            <td>{{product.data}}</td>
-            <td><a href="{{ url_for('remove_product', del_product_id=product.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
-    </tr>
-    {% endfor %}
-</table>
-      </div>
-    </div>
-</div>
-
 <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
@@ -235,5 +126,118 @@
     </div>
   </div>
 
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_moderate">На модерации</a>
+      </h4>
+    </div>
+    <div id="collapse_moderate" class="panel-collapse collapse">
+      <div class="panel-body">
+                 <div class="flight-container" style="overflow: auto; max-height: 80vh">
+            <div class="table-responsive">
+                <table class="table" id="flights">
+                    <thead>
+                        <tr>
+                            <th scope="col">Город</th>
+                            <th scope="col">Район</th>
+                            <th scope="col">Вид товара</th>
+                            <th scope="col">Фасофка</th>
+                            <th scope="col">Дата добавления</th>
+                            <th scope="col">Описание товара</th>
+                            <th scope="col">Создатель</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                        <tr id={{ product.id }}>
+                            <th scope="row">{{product.city}}</th>
+                            <td> {{product.area}} </td>
+                            <td> {{product.sort}} </td>
+                            <td> {{product.packing}} </td>
+                            <td> {{product.create_date}} </td>
+                            <td> {{product.data}} </td>
+                            <td> {{product.user}} </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_trade">В продаже</a>
+      </h4>
+    </div>
+    <div id="collapse_trade" class="panel-collapse collapse">
+      <div class="panel-body">
+                 <table class="table table-striped table-bordered table-condensed">
+<tr>
+    <td><div class="checkbox"><label><input type="checkbox" name=g1 class=chk-all></label></td>
+    <td>Город</td>
+    <td>Район</td>
+    <td>Вид товара</td>
+    <td>Фасофка</td>
+    <td>Дата добавления</td>
+    <td>Описание товара</td>
+    <td></td>
+</tr>
+  {% for product in products %}
+    <tr>
+            <td><div class="checkbox"><label><input type="checkbox" name=g1></label></td>
+            <td>{{product.city}}</td>
+            <td>{{product.area}}</td>
+            <td>{{product.sort}}</td>
+            <td>{{product.packing}}</td>
+            <td>{{product.create_date}}</td>
+            <td>{{product.data}}</td>
+            <td><a href="{{ url_for('remove_product', del_product_id=product.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+    </tr>
+    {% endfor %}
+</table>
+      </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#collapseOne" href="#collapse_sale">Проданные</a>
+      </h4>
+    </div>
+    <div id="collapse_sale" class="panel-collapse collapse">
+      <div class="panel-body">
+                 <table class="table table-striped table-bordered table-condensed">
+<tr>
+    <td><div class="checkbox"><label><input type="checkbox" name=g1 class=chk-all></label></td>
+    <td>Город</td>
+    <td>Район</td>
+    <td>Вид товара</td>
+    <td>Фасофка</td>
+    <td>Дата добавления</td>
+    <td>Описание товара</td>
+    <td></td>
+</tr>
+  {% for product in products %}
+    <tr>
+            <td><div class="checkbox"><label><input type="checkbox" name=g1></label></td>
+            <td>{{product.city}}</td>
+            <td>{{product.area}}</td>
+            <td>{{product.sort}}</td>
+            <td>{{product.packing}}</td>
+            <td>{{product.create_date}}</td>
+            <td>{{product.data}}</td>
+            <td><a href="{{ url_for('remove_product', del_product_id=product.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+    </tr>
+    {% endfor %}
+</table>
+      </div>
+    </div>
+</div>
 
 {% endblock %}

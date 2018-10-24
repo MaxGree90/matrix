@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 from flask import render_template, flash, redirect, url_for, request, json
 from werkzeug.urls import url_parse
 from app.forms import LoginForm, AddUserForm, CityAdd, AreaAdd, PackingAdd, SpecPriceForm, StoreEdit, StoreCur, \
@@ -269,8 +268,7 @@ def setting():
     elif form_packing.submit_packing.data and request.method == 'POST':
         ss = Store.query.get(current_user.store_id)
         p_unit = Units.query.get(form_packing.units.data)
-        p_title = str(Sorts.query.get(form_packing.sort.data)) + " :  " + form_packing.weight.data + " " + str(
-            p_unit) + " " + form_packing.price.data + " " + str(ss.cur)
+        p_title = form_packing.weight.data + " " + str(p_unit)
         packing = Packing(title=p_title, store_id=current_user.store_id, weight=form_packing.weight.data,
                           units=form_packing.units.data, price=form_packing.price.data, sorts_id=form_packing.sort.data)
         db.session.add(packing)

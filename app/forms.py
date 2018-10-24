@@ -91,7 +91,7 @@ class AddProduct(FlaskForm):
     add_mode = SelectField('Режим загрузки', choices=[('1', 'Добавить один адрес'),
                                                       ('2', 'Мультизагрузка, разделитель пустая строка'),
                                                       ('3', 'Мультизагрузка, разделить ;')])
-    sort_select = SelectField('Вид товара')
+    sort_select = SelectField('Товар')
     city_select = SelectField('Город')
     area_select = SelectField('Район')
     packing_select = SelectField('Фасофка')
