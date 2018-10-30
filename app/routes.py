@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, flash, redirect, url_for, request, json
+import os
+from flask import render_template, flash, redirect, url_for, request, json, send_from_directory
 from werkzeug.urls import url_parse
 from app.forms import LoginForm, AddUserForm, CityAdd, AreaAdd, PackingAdd, SpecPriceForm, StoreEdit, StoreCur, \
     AddBotForm, EditUserForm, AddSortsForm, AddProduct
@@ -15,6 +16,16 @@ def store(a):
     return s
 
 
+@app.route('/js/<path:filename>')
+def serve_static_js(filename):
+    return send_from_directory(os.path.join('.', 'static', 'js'), filename)
+
+
+@app.route('/css/<path:filename>')
+def serve_static_css(filename):
+    return send_from_directory(os.path.join('.', 'static', 'css'), filename)
+
+
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
@@ -28,15 +39,15 @@ def before_request():
 def home():
     return render_template(
         'index.html',
-        title='Statistic Page',
+        title='Matrix',
         year=datetime.now().year,
         scores=Score.query.filter_by(store_id=current_user.store_id)
     )
 
 
-@app.route('/edit_user', methods=['GET', 'POST'])
+@app.route('/profile_edit', methods=['GET', 'POST'])
 @login_required
-def edit_user():
+def profile_edit():
     form_user = EditUserForm()
     form_user.position.choices = [(p.id, p.title) for p in Position.query.all()]
     if form_user.submit.data:
@@ -73,7 +84,7 @@ def logout():
 def remove_area(del_area_id):
     Area.query.filter_by(id=del_area_id).delete()
     db.session.commit()
-    return redirect(url_for('setting'))
+    return redirect(url_for('setting_city'))
 
 
 @app.route('/remove_city/<del_city_id>')
@@ -81,7 +92,7 @@ def remove_area(del_area_id):
 def remove_city(del_city_id):
     City.query.filter_by(id=del_city_id).delete()
     db.session.commit()
-    return redirect(url_for('setting'))
+    return redirect(url_for('setting_city'))
 
 
 @app.route('/remove_sort/<del_sort_id>')
@@ -198,6 +209,17 @@ def get_area_select():
 @app.route('/get_packing_select', methods=['GET', 'POST'])
 @login_required
 def get_packing_select():
+    sorts_id = request.form['sort_select']
+    item_list = Packing.query.filter_by(sorts_id=sorts_id).all()
+    result_list = dict()
+    for item in item_list:
+        result_list[item.id] = item.title
+    return json.dumps(result_list)
+
+
+@app.route('/get_users', methods=['GET', 'POST'])
+@login_required
+def get_users():
     sorts_id = request.form['sort_select']
     item_list = Packing.query.filter_by(sorts_id=sorts_id).all()
     result_list = dict()
@@ -329,23 +351,178 @@ def setting():
     )
 
 
-@app.route('/buyers')
+@app.route('/setting_city', methods=['GET', 'POST'])
 @login_required
-def buyers():
+def setting_city():
+    form_city = CityAdd()
+    form_area = AreaAdd()
+    form_area.city_name.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id)]
+    if form_city.submit_city.data and form_city.validate() and request.method == 'POST':
+        city = City(title=form_city.title_city.data, store_id=current_user.store_id)
+        db.session.add(city)
+        db.session.commit()
+        flash('Город добавлен')
+        return redirect(url_for('setting_city'))
+    elif form_area.submit_area.data and request.method == 'POST':
+        area = Area(title=form_area.title_area.data, city_id=form_area.city_name.data, store_id=current_user.store_id)
+        db.session.add(area)
+        db.session.commit()
+        flash('Район добавлен')
+        return redirect(url_for('setting_city'))
     return render_template(
-        'about.html',
-        title='setting',
-        year=datetime.now().year,
-        message='Your contact page.',
+        'setting_city.html',
+        title='Города',
+        form_city=form_city,
+        form_area=form_area,
+        city=City.query.filter_by(store_id=current_user.store_id),
+        area=Area.query.filter_by(store_id=current_user.store_id)
     )
 
 
-@app.route('/about')
+@app.route('/setting_packing', methods=['GET', 'POST'])
 @login_required
-def about():
+def setting_packing():
+    form_sort = AddSortsForm()
+    form_packing = PackingAdd()
+    form_spec_p = SpecPriceForm()
+    form_spec_p.city.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id)]
+    form_spec_p.pac.choices = [(p.id, p.title) for p in Packing.query.filter_by(store_id=current_user.store_id)]
+    form_packing.units.choices = [(u.id, u.title) for u in Units.query.all()]
+    form_packing.sort.choices = [(s.id, s.title) for s in Sorts.query.filter_by(store_id=current_user.store_id)]
+    store_setting = Store.query.get(current_user.store_id)
+    if form_sort.submit_sort.data and request.method == 'POST':
+        new_sort = Sorts(title=form_sort.title.data, store_id=current_user.store_id)
+        db.session.add(new_sort)
+        db.session.commit()
+        flash('Вид товара добавлен')
+        return redirect(url_for('setting_packing'))
+    elif form_packing.submit_packing.data and request.method == 'POST':
+        p_unit = Units.query.get(form_packing.units.data)
+        p_title = form_packing.weight.data + " " + str(p_unit)
+        packing = Packing(title=p_title, store_id=current_user.store_id, weight=form_packing.weight.data,
+                          units=form_packing.units.data, price=form_packing.price.data, sorts_id=form_packing.sort.data)
+        db.session.add(packing)
+        db.session.commit()
+        flash('Фасофка добавлена')
+        return redirect(url_for('setting_packing'))
+    elif form_spec_p.submit_sp.data and request.method == 'POST':
+        spec_price = SpecPrice(store_id=current_user.store_id, spec_price=form_spec_p.spec_price.data,
+                               city_id=form_spec_p.city.data, packing_id=form_spec_p.pac.data)
+        db.session.add(spec_price)
+        db.session.commit()
+        flash('Спец цена добавлена')
+        return redirect(url_for('setting_packing'))
     return render_template(
-        'about.html',
-        title='About',
-        year=datetime.now().year,
-        message='Your application description page.',
+        'setting_packing.html',
+        form_packing=form_packing,
+        form_sort=form_sort,
+        form_spec_p=form_spec_p,
+        sort=Sorts.query.filter_by(store_id=current_user.store_id),
+        spec_price=SpecPrice.query.filter_by(store_id=current_user.store_id),
+        packing=Packing.query.filter_by(store_id=current_user.store_id),
+        title='Фасофка',
+        stcur=store_setting.cur
+    )
+
+
+@app.route('/setting_users', methods=['GET', 'POST'])
+@login_required
+def setting_users():
+    form_user = AddUserForm()
+    form_user.position.choices = [(p.id, p.title) for p in Position.query.all()]
+    if form_user.submit.data and request.method == 'POST':
+        new_user = User(username=form_user.username.data, password=form_user.password.data,
+                        store_id=current_user.store_id, position_id=form_user.position.data, about=form_user.about.data,
+                        mail=form_user.mail.data)
+        new_user.set_password(form_user.password.data)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Пользователь добавлен')
+        return redirect(url_for('setting_users'))
+    return render_template(
+        'setting_users.html',
+        title='Сотрудники',
+        users=User.query.filter_by(store_id=current_user.store_id),
+        form_user=form_user
+    )
+
+
+@app.route('/setting_bots')
+@login_required
+def setting_bots():
+    return render_template(
+        'index.html',
+        title='Боты',
+    )
+
+
+@app.route('/setting_transfer')
+@login_required
+def setting_transfer():
+    return render_template(
+        'index.html',
+        title='Автовывод',
+    )
+
+
+@app.route('/product_add')
+@login_required
+def product_add():
+    return render_template(
+        'index.html',
+        title='Добавление товара',
+    )
+
+
+@app.route('/product_in_trade')
+@login_required
+def product_in_trade():
+    return render_template(
+        'index.html',
+        title='В продаже',
+    )
+
+
+@app.route('/product_sale')
+@login_required
+def product_sale():
+    return render_template(
+        'index.html',
+        title='Проданные',
+    )
+
+
+@app.route('/money_up')
+@login_required
+def money_up():
+    return render_template(
+        'index.html',
+        title='Пополнения баланса',
+    )
+
+
+@app.route('/money_down')
+@login_required
+def money_down():
+    return render_template(
+        'index.html',
+        title='Расходы',
+    )
+
+
+@app.route('/orders')
+@login_required
+def orders():
+    return render_template(
+        'index.html',
+        title='Счета',
+    )
+
+
+@app.route('/clients')
+@login_required
+def clients():
+    return render_template(
+        'index.html',
+        title='Сотрудники',
     )
