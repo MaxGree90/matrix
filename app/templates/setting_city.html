@@ -24,7 +24,7 @@
                         {% if a.city_id == c.id %}
                             <tr>
                                 <td>{{a.title}}</td>
-                                <td><a href="{{ url_for('remove_area', del_area_id=a.id) }}" class="glyphicon glyphicon-remove"></a></td>
+                                <td><a class="btn btn-danger btn-sm" href="{{ url_for('remove_area', del_area_id=a.id) }}" role="button">Удалить</a></td>
                             </tr>
                         {% endif %}
                     {% endfor %}
