@@ -2,56 +2,64 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
 
-
-<div id="accordion" role="tablist" aria-multiselectable="true">
-
-{% for c in city %}
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="heading{{c.title}}">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{c.title}}" aria-expanded="false" aria-controls="collapse{{c.title}}">
-          {{c.title}}
-        </a>
-      </h4>
-    </div>
-    <div id="collapse{{c.title}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{c.title}}">
-        <table class="table table-sm table-condensed">
-        {% for a in area %}
-            {% if a.city_id == c.id %}
-                <tr>
-                    <td>{{a.title}}</td>
-                    <td><a href="{{ url_for('remove_area', del_area_id=a.id) }}" class="glyphicon glyphicon-remove"></a></td>
-                </tr>
-            {% endif %}
-        {% endfor %}
-        </table>
-    </div>
-  </div>
-{% endfor %}
-
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="headingTwo">
-      <h4 class="panel-title">
-        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-          Добавление Городов
-        </a>
-      </h4>
-    </div>
-    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-        {{ wtf.quick_form(form_city) }}
-    </div>
-  </div>
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="headingThree">
-      <h4 class="panel-title">
-        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-          Добавление районов
-        </a>
-      </h4>
-    </div>
-    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-        {{ wtf.quick_form(form_area) }}
-    </div>
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+        <p class="lead">
+            <hr>
+            <h4> Настройки городов и районов</h4>
+            <hr>
+            <div id="accordion" role="tablist" aria-multiselectable="true">
+            {% for c in city %}
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="heading{{c.title}}">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{c.title}}" aria-expanded="true" aria-controls="collapse{{c.title}}">
+                      {{c.title}}
+                    </a>
+                  </h5>
+                </div>
+                <div id="collapse{{c.title}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{c.title}}">
+                    <table class="table table-sm table-condensed">
+                    {% for a in area %}
+                        {% if a.city_id == c.id %}
+                            <tr>
+                                <td>{{a.title}}</td>
+                                <td><a href="{{ url_for('remove_area', del_area_id=a.id) }}" class="glyphicon glyphicon-remove"></a></td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </table>
+                </div>
+              </div>
+            {% endfor %}
+            <hr>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                  <h6 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      Добавление Городов
+                    </a>
+                  </h6>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                    {{ wtf.quick_form(form_city) }}
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingThree">
+                  <h6 class="panel-title">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      Добавление районов
+                    </a>
+                  </h6>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                    {{ wtf.quick_form(form_area) }}
+                </div>
+              </div>
+            </div>
+        </p>
   </div>
 </div>
+
 {% endblock %}
