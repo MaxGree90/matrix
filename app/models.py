@@ -30,7 +30,7 @@ class Store(db.Model):
     area_use = db.Column(db.Boolean, unique=False, default=False)
     qiwi_unblock = db.Column(db.Boolean, unique=False, default=False)
     reservation = db.Column(db.Boolean, unique=False, default=False)
-    reservation_time = (db.Integer())
+    reservation_time = db.Column(db.String(2))
     display_qg = db.Column(db.Boolean, unique=False, default=False)
     currency = db.Column(db.Integer, db.ForeignKey('currency.id'))
 

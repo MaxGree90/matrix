@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm, RecaptchaField
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Length, ValidationError, Email, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField, IntegerField
+from wtforms.validators import DataRequired, Length, ValidationError, Email, EqualTo, NumberRange
 from flask_login import current_user
 
 from app.models import User, Area, City, Sorts, Packing
@@ -63,7 +63,7 @@ class EditUserForm(FlaskForm):
         if user is not None:
             raise ValidationError('Такое имя пользователя уже занято! Введите другое!')
 
-    def validate_email(self, email):
+    def validate_email(self, mail):
         user = User.query.filter_by(email=mail.data).first()
         if user is not None:
             raise ValidationError('Этот почтовый ящик уже занят! Введите другой!')
@@ -131,16 +131,17 @@ class SpecPriceForm(FlaskForm):
 
 
 class StoreEdit(FlaskForm):
-    change_name = BooleanField('Использовать название магазина вместо имени бота')
-    title_store = StringField('Название магазина')
-    first_message = TextAreaField('Первое сообщение', validators=[Length(min=0, max=500)])
-    help_message = TextAreaField('Дополнение к сообщению помощь', validators=[Length(min=0, max=500)])
-    footer_message = StringField('Текст в самом низу каждого сообщения', validators=[Length(min=0, max=140)])
-    store_www = StringField('Сайт магазина')
+    title_store = StringField('Название магазина', validators=[DataRequired()])
+    store_www = StringField('Сайт магазина (если есть)')
+    help_chat = StringField('Чат магазина (если есть)')
     use_area = BooleanField('Использовать районы')
-    exmocode = BooleanField('Принимать EXMO')
+    exmo_use = BooleanField('Принимать EXMO-CODE')
     display_qg = BooleanField('Отображать колличество оставщегося товара')
-    clientname = BooleanField('Приветствовать клиента по Имени в Телеграмм')
-    reservation = BooleanField('Бронирование товара клиентом')
-    reservation_time = StringField('Время бронирования товара')
+    reservation = BooleanField('Разрешить бронирование товара клиентом')
+    reservation_time = IntegerField('Время бронирования товара (в минутах)', validators=[NumberRange(max=2, message="максимум 99")])
     submit_st = SubmitField('Сохранить')
+
+    def validate_reservation(self, reservation, reservation_time):
+        if reservation == True:
+            if 0 <= reservation_time <=99:
+                raise ValidationError('Такое имя пользователя уже занято! Введите другое!')

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+
+<h6>Настройки магазина</h6>
+<hr>
+{{ wtf.quick_form(form_store) }}
+<hr>
+<h6>Текущая валюта магазина: {{ store_setting.cur }}</h6>
+<hr>
+{{ wtf.quick_form(form_select_cur) }}
+<hr>
+
+{% endblock %}

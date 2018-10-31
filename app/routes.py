@@ -539,11 +539,39 @@ def clients():
         title='Сотрудники',
     )
 
-@app.route('/setting_store')
+@app.route('/setting_store', methods=['GET', 'POST'])
 @login_required
 def setting_store():
     form_store = StoreEdit()
+    form_select_cur = StoreCur()
+    form_select_cur.сur_st.choices = [(cur.id, cur.code_abc) for cur in Currency.query.all()]
+    form_select_cur.сur_st.choices.insert(0, (0, "Не выбрано"))
+    store_setting = Store.query.get(current_user.store_id)
+    if request.method == 'GET':
+        form_store.title_store.data = store_setting.title
+        form_store.help_chat.data = store_setting.help_chat
+        form_store.store_www.data = store_setting.store_www
+        form_store.use_area.data = store_setting.area_use
+        form_store.exmo_use.data = store_setting.exmo_use
+        form_store.display_qg.data = store_setting.display_qg
+        form_store.reservation.data = store_setting.reservation
+        form_store.reservation_time.data = store_setting.reservation_time
+    elif form_store.submit_st.data and request.method == 'POST':
+        store_setting = Store.query.get(current_user.store_id)
+        store_setting.title = form_store.title_store.data
+        store_setting.help_chat = form_store.help_chat.data
+        store_setting.store_www = form_store.store_www.data
+        store_setting.use_area = form_store.use_area.data
+        store_setting.exmo_use = form_store.exmo_use.data
+        store_setting.display_qg = form_store.display_qg.data
+        store_setting.reservation = form_store.reservation.data
+        store_setting.reservation_time = form_store.reservation_time.data
+        db.session.commit()
+        flash('Настройки магазина обновлены')
     return render_template(
-        'settig_store.html',
-        title='Yf',
+        'setting_store.html',
+        form_store=form_store,
+        form_select_cur=form_select_cur,
+        store_setting=store_setting,
+        title='Настройки магазина',
     )
