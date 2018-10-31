@@ -113,18 +113,14 @@
                         $(this).addClass("is-child")
                     }
                 });
-
             $(".satishraj-tree-container li.tree-li span.text").unbind("click");
                 $(".satishraj-tree-container li.tree-li.is-child span.text").click(function () {
                     $(this).parent(".tree-li").toggleClass("diactive");
                     $(this).parent(".tree-li").find(".tree-ul:first").toggleClass("diactive");
                 });
         }
-
         checkSatishRajTreeCollaps()
-
         });</script>
-
         </div>
 {% endif %}
 {% endblock %}
