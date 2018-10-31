@@ -538,3 +538,12 @@ def clients():
         'index.html',
         title='Сотрудники',
     )
+
+@app.route('/setting_store')
+@login_required
+def setting_store():
+    form_store = StoreEdit()
+    return render_template(
+        'settig_store.html',
+        title='Yf',
+    )
