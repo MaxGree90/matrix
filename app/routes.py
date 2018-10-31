@@ -443,16 +443,28 @@ def setting_users():
         'setting_users.html',
         title='Сотрудники',
         users=User.query.filter_by(store_id=current_user.store_id),
-        form_user=form_user
+        form_user=form_user,
     )
 
 
-@app.route('/setting_bots')
+@app.route('/setting_bots', methods=['GET', 'POST'])
 @login_required
 def setting_bots():
+    form_bot = AddBotForm()
+    form_store=StoreEdit()
+    if form_bot.submit_bot.data and request.method == 'POST':
+        new_bot = TelegramBot(phone_number=form_bot.phone_num.data, store_id=current_user.store_id, code=form_bot.code.data)
+        db.session.add(new_bot)
+        db.session.commit()
+        flash('Телеграмм бот добавлен')
+    elif form_bot.code_bot and request.method == 'POST':
+        flash('Тут должна быть функция которая запросит код и создаст config.ini')
     return render_template(
-        'index.html',
+        'setting_robots.html',
         title='Боты',
+        bots=TelegramBot.query.filter_by(store_id=current_user.store_id),
+        form_bot=form_bot,
+        form_store=form_store
     )
 
 

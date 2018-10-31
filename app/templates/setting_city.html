@@ -6,29 +6,24 @@
   <div class="container">
         <p class="lead">
             <hr>
-            <h4> Настройки городов и районов</h4>
+            <h5> Настройки городов и районов</h5>
             <hr>
             <div id="accordion" role="tablist" aria-multiselectable="true">
             {% for c in city %}
               <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="heading{{c.title}}">
-                  <h5 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{c.title}}" aria-expanded="true" aria-controls="collapse{{c.title}}">
+                  <h6 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{c.title}}" aria-expanded="false" aria-controls="collapse{{c.title}}">
                       {{c.title}}
                     </a>
-                  </h5>
+                  </h6>
                 </div>
                 <div id="collapse{{c.title}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{c.title}}">
-                    <table class="table table-sm table-condensed">
                     {% for a in area %}
                         {% if a.city_id == c.id %}
-                            <tr>
-                                <td>{{a.title}}</td>
-                                <td><a class="btn btn-danger btn-sm" href="{{ url_for('remove_area', del_area_id=a.id) }}" role="button">Удалить</a></td>
-                            </tr>
+                                {{a.title}}  <a class="btn btn-outline-danger btn-sm" href="{{ url_for('remove_area', del_area_id=a.id) }}">удалить</a>
                         {% endif %}
                     {% endfor %}
-                    </table>
                 </div>
               </div>
             {% endfor %}

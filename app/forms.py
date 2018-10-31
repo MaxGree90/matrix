@@ -7,7 +7,7 @@ from app.models import User, Area, City, Sorts, Packing
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Имя пользователя', validators=[DataRequired()])
+    username = StringField('Логин', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     # recaptcha = RecaptchaField()
@@ -15,8 +15,10 @@ class LoginForm(FlaskForm):
 
 
 class AddBotForm(FlaskForm):
+    title = StringField('Название')
     phone_num = StringField('Номер телефона', validators=[DataRequired()])
-    password = StringField('Пароль', validators=[DataRequired()])
+    help_chat = StringField('Чат поддержки')
+    code_bot = SubmitField('Получить код авторизации')
     code = StringField('Код авторизации')
     submit_bot = SubmitField('Добавить')
 
@@ -129,11 +131,16 @@ class SpecPriceForm(FlaskForm):
 
 
 class StoreEdit(FlaskForm):
+    change_name = BooleanField('Использовать название магазина вместо имени бота')
     title_store = StringField('Название магазина')
     first_message = TextAreaField('Первое сообщение', validators=[Length(min=0, max=500)])
     help_message = TextAreaField('Дополнение к сообщению помощь', validators=[Length(min=0, max=500)])
     footer_message = StringField('Текст в самом низу каждого сообщения', validators=[Length(min=0, max=140)])
-    help_chat = StringField('Чат поддержки')
     store_www = StringField('Сайт магазина')
-    qiwi_unblock = BooleanField('Включить приём Qiwi Без блокировок')
+    use_area = BooleanField('Использовать районы')
+    exmocode = BooleanField('Принимать EXMO')
+    display_qg = BooleanField('Отображать колличество оставщегося товара')
+    clientname = BooleanField('Приветствовать клиента по Имени в Телеграмм')
+    reservation = BooleanField('Бронирование товара клиентом')
+    reservation_time = StringField('Время бронирования товара')
     submit_st = SubmitField('Сохранить')

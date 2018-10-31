@@ -25,7 +25,13 @@ class Store(db.Model):
     footer_message = db.Column(db.String(400))
     help_chat = db.Column(db.String(64))
     store_www = db.Column(db.String(64))
+    change_bot_name = db.Column(db.Boolean, unique=False, default=False)
+    exmo_use = db.Column(db.Boolean, unique=False, default=False)
+    area_use = db.Column(db.Boolean, unique=False, default=False)
     qiwi_unblock = db.Column(db.Boolean, unique=False, default=False)
+    reservation = db.Column(db.Boolean, unique=False, default=False)
+    reservation_time = (db.Integer())
+    display_qg = db.Column(db.Boolean, unique=False, default=False)
     currency = db.Column(db.Integer, db.ForeignKey('currency.id'))
 
     def __repr__(self):
@@ -34,7 +40,9 @@ class Store(db.Model):
 
 class TelegramBot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64))
     phone_number = db.Column(db.String(64))
+    help_chat = db.Column(db.String(64))
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
     password = db.Column(db.String(64))
     code = db.Column(db.String(64))
@@ -102,7 +110,10 @@ class SpecPrice(db.Model):
 class Botstate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), index=True, unique=True)
-    bot = db.relationship('TelegramBot', backref='bot_state', lazy='dynamic', cascade="all,delete")
+    bot = db.relationship('TelegramBot', backref='botstat', lazy='dynamic', cascade="all,delete")
+
+    def __repr__(self):
+        return format(self.title)
 
 
 class State(db.Model):
