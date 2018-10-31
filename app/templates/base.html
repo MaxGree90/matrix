@@ -9,126 +9,127 @@
 {% block navbar %}
 {% if current_user.is_anonymous %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">BotMatrix</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+    <a class="navbar-brand" href="#">BotMatrix</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 </nav>
 {% else %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">BotMatrix</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-      <ul class="nav navbar-nav ml-auto">
-          <li class="nav-item active">
+    <a class="navbar-brand" href="#">BotMatrix</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="nav navbar-nav ml-auto">
+        <li class="nav-item active">
             <a class="nav-link" href="{{ url_for('profile_edit') }}">{{ current_user.username }} ({{current_user.store}}) <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('logout') }}">Выход <span class="sr-only">(current)</span></a>
-          </li>
-      </ul>
-  </div>
-</nav>
-
-<ul class="satishraj-tree-container">
-    <li class="tree-li diactive">
-      <span class="text">Настройки</span>
-      <ul class="tree-ul diactive">
-          <li class="tree-li">
-            <span class="text"><a href="javascript:;">Магазин</a></span>
-         </li>
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;">Боты</a></span>
-         </li>
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;">Пользователи</a></span>
-         </li>
-          <li class="tree-li">
-            <span class="text"><a href="javascript:;">Прочее</a></span>
-         </li>
-      </ul>
-   </li>
-   <li class="tree-li diactive">
-      <span class="text">Товары</span>
-      <ul class="tree-ul diactive">
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;"> Вид</a></span>
-         </li>
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;">Фасовка</a></span>
-         </li>
-          <li class="tree-li">
-            <span class="text"><a href="javascript:;">Номенклатура</a></span>
-         </li>
-      </ul>
-   </li>
-   <li class="tree-li diactive">
-      <span class="text">География</span>
-        <ul class="tree-ul diactive">
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;"> Города</a></span>
-         </li>
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;"> Районы</a></span>
-         </li>
-      </ul>
-   </li>
-   <li class="tree-li diactive">
-      <span class="text">Финансы</span>
-      <ul class="tree-ul diactive">
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;"> Пополнение</a></span>
-         </li>
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;"> Вывод</a></span>
-         </li>
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;"> Приходы и расходы</a></span>
-         </li>
-      </ul>
-   </li>
-   <li class="tree-li diactive">
-      <span class="text">Отчеты</span>
-       <ul class="tree-ul diactive">
-       </li>
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;">В продаже</a></span>
-         </li>
-         <li class="tree-li">
-            <span class="text"><a href="javascript:;">Проданные</a></span>
-         </li>
-        <li class="tree-li">
-            <span class="text"><a href="javascript:;">Статистика</a></span>
         </li>
-      </ul>
-   </li>
-</ul>
-    <script>$(document).ready(function(){
-    function checkSatishRajTreeCollaps() {
-    $(".satishraj-tree-container li.tree-li").removeClass("is-child")
-        $(".satishraj-tree-container li.tree-li").each(function () {
-            if ($(this).find("ul.tree-ul li").length > 0) {
-                $(this).addClass("is-child")
-            }
-        });
+        <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('logout') }}">Выход <span class="sr-only">(current)</span></a>
+        </li>
+    </ul>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 col-sm-4 col-xs-6" style="padding-left:0px;">
+            <ul class="satishraj-tree-container">
+                <li class="tree-li diactive">
+                    <span class="text">Настройки</span>
+                    <ul class="tree-ul diactive">
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">Магазин</a></span>
+                        </li>
+                        <li class="tree-li">
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">Боты</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">Пользователи</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">Прочее</a></span>
+                        </li>
+                    </ul>
+                </li>
+                <li class="tree-li diactive">
+                    <span class="text">Товары</span>
+                    <ul class="tree-ul diactive">
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;"> Вид</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">Фасовка</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">Номенклатура</a></span>
+                        </li>
+                    </ul>
+                </li>
+                <li class="tree-li diactive">
+                    <span class="text">География</span>
+                    <ul class="tree-ul diactive">
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;"> Города</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;"> Районы</a></span>
+                        </li>
+                    </ul>
+                </li>
+                <li class="tree-li diactive">
+                    <span class="text">Финансы</span>
+                    <ul class="tree-ul diactive">
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;"> Пополнение</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;"> Вывод</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;"> Приходы и расходы</a></span>
+                        </li>
+                    </ul>
+                </li>
+                <li class="tree-li diactive">
+                    <span class="text">Отчеты</span>
+                    <ul class="tree-ul diactive">
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">В продаже</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">Проданные</a></span>
+                        </li>
+                        <li class="tree-li">
+                            <span class="text"><a href="javascript:;">Статистика</a></span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <script>$(document).ready(function(){
+            function checkSatishRajTreeCollaps() {
+            $(".satishraj-tree-container li.tree-li").removeClass("is-child")
+                $(".satishraj-tree-container li.tree-li").each(function () {
+                    if ($(this).find("ul.tree-ul li").length > 0) {
+                        $(this).addClass("is-child")
+                    }
+                });
 
-    $(".satishraj-tree-container li.tree-li span.text").unbind("click");
-        $(".satishraj-tree-container li.tree-li.is-child span.text").click(function () {
-            $(this).parent(".tree-li").toggleClass("diactive");
-            $(this).parent(".tree-li").find(".tree-ul:first").toggleClass("diactive");
-        });
-}
+            $(".satishraj-tree-container li.tree-li span.text").unbind("click");
+                $(".satishraj-tree-container li.tree-li.is-child span.text").click(function () {
+                    $(this).parent(".tree-li").toggleClass("diactive");
+                    $(this).parent(".tree-li").find(".tree-ul:first").toggleClass("diactive");
+                });
+        }
 
-checkSatishRajTreeCollaps()
+        checkSatishRajTreeCollaps()
 
-});</script>
+        });</script>
 
-
+        </div>
 {% endif %}
 {% endblock %}
 {% block content %}
-    <div class="container">
+    <div class="col">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
@@ -140,3 +141,5 @@ checkSatishRajTreeCollaps()
         {% block app_content %}{% endblock %}
     </div>
 {% endblock %}
+    </div>
+</div>

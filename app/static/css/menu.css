@@ -125,7 +125,7 @@ body {
     margin:0;
     cursor: pointer;
     background:#343a40;
-    width:15%;
+    /*width:15%;*/
     min-height:100vh;
 }
 
