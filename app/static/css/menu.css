@@ -108,3 +108,63 @@ body {
 .menu > li:hover .submenu li:nth-child(odd) {
   -webkit-transform: skewX(-25deg) translateX(-15px);
 }
+
+
+/*Left menu*/
+
+.satishraj-tree-container a {
+    color:#fff;
+}
+
+.satishraj-tree-container .text {
+    color:#fff;
+}
+
+.satishraj-tree-container {
+    padding: 10px !important;
+    margin:0;
+    cursor: pointer;
+    background:#343a40;
+    width:15%;
+    min-height:100vh;
+}
+
+.satishraj-tree-container .tree-li {
+    padding: 2px !important;
+    word-wrap: break-word;
+    list-style:none;
+}
+
+.satishraj-tree-container .tree-li{
+    padding-left: 5px !important;
+}
+
+.satishraj-tree-container .tree-li .tree-ul.diactive {
+    display: none;
+}
+
+.satishraj-tree-container .tree-li .text {
+    top: -3px;
+    position: relative;
+}
+
+.satishraj-tree-container .tree-li.is-child > .text:before {
+    content: "\25BE";
+    font-size: 22px;
+    top: 2px;
+    position: relative;
+    padding-right: 5px;
+}
+
+
+
+.satishraj-tree-container .tree-li.is-child.diactive > .text:before {
+    content: "\25B8" !important;
+}
+
+
+.satishraj-tree-container .tree-li [type="checkbox"] + label {
+    padding-left: 25px !important;
+}
+
+/*Left menu*/
