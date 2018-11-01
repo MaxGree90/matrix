@@ -431,6 +431,7 @@ def setting_users():
     form_user = AddUserForm()
     form_user_edit = EditUserForm()
     form_user.position.choices = [(p.id, p.title) for p in Position.query.all()]
+    form_user_edit.position.choices = form_user.position.choices
     if form_user.submit.data and request.method == 'POST':
         new_user = User(username=form_user.username.data, password=form_user.password.data,
                         store_id=current_user.store_id, position_id=form_user.position.data, about=form_user.about.data,
@@ -441,6 +442,12 @@ def setting_users():
         flash('Пользователь добавлен')
         return redirect(url_for('setting_users'))
     elif form_user_edit.submit.data and request.method == 'POST':
+        edit_user = User.query.filter_by(id=form_user_edit.id.data)
+        edit_user.password = form_user_edit.password.data
+        edit_user.password_hash(form_user.password.data)
+        edit_user.position_id = form_user_edit.position.data
+        edit_user.about = form_user_edit.about.data
+        edit_user.mail = form_user_edit.mail.data
         flash('Пользователь изменён')
         return redirect(url_for('setting_users'))
     return render_template(

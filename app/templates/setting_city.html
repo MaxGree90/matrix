@@ -2,53 +2,95 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
 
- <hr>
-            <h5> Настройки городов и районов</h5>
             <hr>
-            <div id="accordion" role="tablist" aria-multiselectable="true">
-            {% for c in city %}
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="heading{{c.title}}">
-                  <h6 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{c.title}}" aria-expanded="false" aria-controls="collapse{{c.title}}">
-                      {{c.title}}
-                    </a>
-                  </h6>
-                </div>
-                <div id="collapse{{c.title}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{c.title}}">
-                    {% for a in area %}
-                        {% if a.city_id == c.id %}
-                                {{a.title}}  <a class="btn btn-outline-danger btn-sm" href="{{ url_for('remove_area', del_area_id=a.id) }}">удалить</a>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-              </div>
-            {% endfor %}
+            <h5>Настройки городов и районов</h5>
             <hr>
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingTwo">
-                  <h6 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                      Добавление Городов
-                    </a>
-                  </h6>
-                </div>
-                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+
+             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#AddCity">
+                Добавить город
+             </button>
+             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#AddArea">
+                Добавить район
+             </button>
+
+            <hr>
+
+            <div class="modal fade" id="AddCity" tabindex="-1" role="dialog" aria-labelledby="AddCityLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="AddCityLabel">Добавление города</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
                     {{ wtf.quick_form(form_city) }}
-                </div>
-              </div>
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingThree">
-                  <h6 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      Добавление районов
-                    </a>
-                  </h6>
-                </div>
-                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                    {{ wtf.quick_form(form_area) }}
+                  </div>
                 </div>
               </div>
             </div>
+
+            <div class="modal fade" id="AddArea" tabindex="-1" role="dialog" aria-labelledby="AddAreaLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="AddAreaLabel">Добавление города</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    {{ wtf.quick_form(form_area) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <table class="table table-sm table-condensed">
+                <table id="table_users" class="display">
+                 <thead>
+                    <tr>
+                        <td>Логин</td>
+                        <td>Должность</td>
+                        <td>Описание</td>
+                        <td>@mail</td>
+                        <td>Последний вход</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                 </thead>
+                <tbody>
+                  {% for user in users %}
+                    <tr>
+                        <td>{{user.username}}</td>
+                        <td>{{user.position}}</td>
+                        <td>{{user.about}}</td>
+                        <td>{{user.mail}}</td>
+                        <td>{{user.last_seen}}</td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal{{user.id}}"><ion-icon name="create"></ion-icon></button></td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal{{user.id}}"><ion-icon name="trash"></ion-icon></button></td>
+                    </tr>
+                    {% endfor %}
+                 </tbody>
+                 <tfoot>
+              </table>
+            {% for city in citys %}
+                <tr>
+                    <td>{{city.title}}</td>
+                    <td></td>
+                    <td><a href="{{ url_for('remove_city', del_city_id=city.id) }}" class="btn btn-danger btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+                </tr>
+                {% for area in areas %}
+                <tr>
+                    {% if area.city_id == city.id %}
+                    <td></td>
+                    <td>{{area.title}}</td>
+                    <td><a href="{{ url_for('remove_area', del_area_id=area.id) }}" class="btn btn-warning btn-xs" role="button"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+           {% endfor %}
+        </table>
 
 {% endblock %}

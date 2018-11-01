@@ -7,18 +7,20 @@
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script src="https://unpkg.com/ionicons@4.4.6/dist/ionicons.js"></script>
+
 
 {% block navbar %}
 {% if current_user.is_anonymous %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">BotMatrix</a>
+    <img class="navbar-brand" src="{{ url_for('static', filename='logo.png') }}" alt="">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 </nav>
 {% else %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">BotMatrix</a>
+    <img class="navbar-brand" src="{{ url_for('static', filename='logo.png') }}" alt="logo">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -36,36 +38,46 @@
         <div class="col-md-2 col-sm-4 col-xs-6" style="padding-left:0px;">
             <ul class="satishraj-tree-container">
                 <li class="tree-li active">
+                    <ion-icon name="settings"></ion-icon>
                     <span class="text">Настройки</span>
                     <ul class="tree-ul active">
                         <li class="tree-li">
+                            <ion-icon name="cart"></ion-icon>
                             <span class="text"><a href="{{ url_for('setting_store') }}">Магазин</a></span>
                         </li>
                         <li class="tree-li">
                         <li class="tree-li">
+                            <ion-icon name="logo-android"></ion-icon>
                             <span class="text"><a href="javascript:;">Боты</a></span>
                         </li>
                         <li class="tree-li">
+                            <ion-icon name="contacts"></ion-icon>
                             <span class="text"><a href="{{ url_for('setting_users') }}">Сотрудники</a></span>
                         </li>
                         <li class="tree-li">
+                            <ion-icon name="pin"></ion-icon>
                             <span class="text"><a href="{{ url_for('setting_city') }}">Города</a></span>
                         </li>
                     </ul>
                 </li>
                 <li class="tree-li active">
+                    <ion-icon name="basket"></ion-icon>
                     <span class="text">Товар</span>
                     <ul class="tree-ul active">
                         <li class="tree-li">
+                            <ion-icon name="funnel"></ion-icon>
                             <span class="text"><a href="javascript:;">Виды</a></span>
                         </li>
                         <li class="tree-li">
+                            <ion-icon name="briefcase"></ion-icon>
                             <span class="text"><a href="javascript:;">Фасовки</a></span>
                         </li>
                         <li class="tree-li">
+                            <ion-icon name="share-alt"></ion-icon>
                             <span class="text"><a href="javascript:;">Добавление</a></span>
                         </li>
                         <li class="tree-li">
+                            <ion-icon name="thumbs-up"></ion-icon>
                             <span class="text"><a href="javascript:;">Модерация</a></span>
                         </li>
                     </ul>
@@ -82,23 +94,28 @@
                     </ul>
                 </li>-->
                 <li class="tree-li active">
+                    <ion-icon name="wallet"></ion-icon>
                     <span class="text">Финансы</span>
                     <ul class="tree-ul active">
                         <li class="tree-li">
-                            <span class="text"><a href="javascript:;">Вывести</a></span>
+                            <ion-icon name="trending-up"></ion-icon>
+                            <span class="text"><a href="javascript:;">Пополнения</a></span>
                         </li>
                         <li class="tree-li">
-                            <span class="text"><a href="javascript:;">Пополнения</a></span>
+                            <ion-icon name="trending-down"></ion-icon>
+                            <span class="text"><a href="javascript:;">Выводы</a></span>
                         </li>
                     </ul>
                 </li>
                 <li class="tree-li active">
+                    <ion-icon name="clipboard"></ion-icon>
                     <span class="text">Отчеты</span>
-                    <ul class="tree-ul active">
                         <li class="tree-li">
+                            <ion-icon name="filing"></ion-icon>
                             <span class="text"><a href="javascript:;">Продажи</a></span>
                         </li>
                         <li class="tree-li">
+                            <ion-icon name="pint"></ion-icon>
                             <span class="text"><a href="javascript:;">Остатки</a></span>
                         </li>
                     </ul>
