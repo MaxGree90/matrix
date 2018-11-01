@@ -1,10 +1,12 @@
-<script src="js/jquery.min.js"></script>
-<script src="js/jquery-3.3.1.slim.min.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/jquery-3.3.1.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
 
 {% block navbar %}
 {% if current_user.is_anonymous %}
@@ -44,10 +46,10 @@
                             <span class="text"><a href="javascript:;">Боты</a></span>
                         </li>
                         <li class="tree-li">
-                            <span class="text"><a href="javascript:;">Сотрудники</a></span>
+                            <span class="text"><a href="{{ url_for('setting_users') }}">Сотрудники</a></span>
                         </li>
                         <li class="tree-li">
-                            <span class="text"><a href="javascript:;">География</a></span>
+                            <span class="text"><a href="{{ url_for('setting_city') }}">Города</a></span>
                         </li>
                     </ul>
                 </li>

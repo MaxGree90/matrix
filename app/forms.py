@@ -50,11 +50,10 @@ class AddUserForm(FlaskForm):
 
 class EditUserForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
-    f_name = StringField('Имя', validators=[DataRequired()])
-    l_name = StringField('Фамилия', validators=[DataRequired()])
     about = TextAreaField('Описание', validators=[Length(min=0, max=140)])
     position = SelectField('Должность', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
+    password2 = PasswordField('Повторите пароль', validators=[DataRequired(), EqualTo('password')])
     mail = StringField('mail', validators=[DataRequired(), Email()])
     submit = SubmitField('Сохранить')
 

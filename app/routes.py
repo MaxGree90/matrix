@@ -429,6 +429,7 @@ def setting_packing():
 @login_required
 def setting_users():
     form_user = AddUserForm()
+    form_user_edit = EditUserForm()
     form_user.position.choices = [(p.id, p.title) for p in Position.query.all()]
     if form_user.submit.data and request.method == 'POST':
         new_user = User(username=form_user.username.data, password=form_user.password.data,
@@ -439,11 +440,15 @@ def setting_users():
         db.session.commit()
         flash('Пользователь добавлен')
         return redirect(url_for('setting_users'))
+    elif form_user_edit.submit.data and request.method == 'POST':
+        flash('Пользователь изменён')
+        return redirect(url_for('setting_users'))
     return render_template(
         'setting_users.html',
         title='Сотрудники',
         users=User.query.filter_by(store_id=current_user.store_id),
         form_user=form_user,
+        form_user_edit=form_user_edit,
     )
 
 
@@ -539,6 +544,7 @@ def clients():
         title='Сотрудники',
     )
 
+
 @app.route('/setting_store', methods=['GET', 'POST'])
 @login_required
 def setting_store():
@@ -568,6 +574,21 @@ def setting_store():
         store_setting.reservation_time = form_store.reservation_time.data
         db.session.commit()
         flash('Настройки магазина обновлены')
+    elif form_select_cur.submit_cur_st and request.method == 'POST':
+        form_store.title_store.data = store_setting.title
+        form_store.help_chat.data = store_setting.help_chat
+        form_store.store_www.data = store_setting.store_www
+        form_store.use_area.data = store_setting.area_use
+        form_store.exmo_use.data = store_setting.exmo_use
+        form_store.display_qg.data = store_setting.display_qg
+        form_store.reservation.data = store_setting.reservation
+        form_store.reservation_time.data = store_setting.reservation_time
+        store_setting = Store.query.get(current_user.store_id)
+        store_setting.currency = form_select_cur.сur_st.data
+        db.session.add(store_setting)
+        db.session.commit()
+        flash('Валюта магазина изменена')
+
     return render_template(
         'setting_store.html',
         form_store=form_store,
