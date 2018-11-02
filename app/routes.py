@@ -374,8 +374,8 @@ def setting_city():
         title='Города',
         form_city=form_city,
         form_area=form_area,
-        city=City.query.filter_by(store_id=current_user.store_id),
-        area=Area.query.filter_by(store_id=current_user.store_id)
+        citys=City.query.filter_by(store_id=current_user.store_id),
+        areas=Area.query.filter_by(store_id=current_user.store_id)
     )
 
 
