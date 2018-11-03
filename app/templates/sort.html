@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+
+            <hr>
+            <h5>Настроки видов товара</h5>
+            <hr>
+
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#AddSort">
+                Добавить вид товара
+            </button>
+
+            <hr>
+
+            <div class="modal fade" id="AddSort" tabindex="-1" role="dialog" aria-labelledby="AddSortLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="AddSortLabel">Добавление вида товара</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    {{ wtf.quick_form(form_sort_add) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+             <table id="table_sort" class="display">
+                 <thead>
+                    <tr>
+                        <td>Название</td>
+                        <td>Описание</td>
+                        <td></td>
+                    </tr>
+                 </thead>
+                <tbody>
+                  {% for s in sort %}
+                    <tr>
+                        <td>{{s.title}}</td>
+                        <td>{{s.about}}</td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditSort{{s.id}}"><ion-icon name="create"></ion-icon></button>
+                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveSort{{s.id}}"><ion-icon name="trash"></ion-icon></button></td>
+                    </tr>
+                    {% endfor %}
+                 </tbody>
+                 <tfoot>
+              </table>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $('#table_sort').dataTable( {
+                            "language": {
+                                "url": "//cdn.datatables.net/plug-ins/1.10.19/i18n/Russian.json"
+                            }
+                        } );
+                    } );
+                </script>
+
+{% endblock %}

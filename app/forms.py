@@ -25,7 +25,14 @@ class AddBotForm(FlaskForm):
 
 class AddSortsForm(FlaskForm):
     title = StringField('Название', validators=[DataRequired()])
+    about = TextAreaField('Описание', validators=[Length(min=0, max=140)])
     submit_sort = SubmitField('Добавить')
+
+
+class EditSortsForm(FlaskForm):
+    title = StringField('Название', validators=[DataRequired()])
+    about = TextAreaField('Описание', validators=[Length(min=0, max=140)])
+    submit_sort = SubmitField('Сохранить')
 
 
 class AddUserForm(FlaskForm):

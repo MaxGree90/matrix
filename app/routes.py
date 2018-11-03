@@ -3,7 +3,7 @@ import os
 from flask import render_template, flash, redirect, url_for, request, json, send_from_directory
 from werkzeug.urls import url_parse
 from app.forms import LoginForm, AddUserForm, CityAdd, AreaAdd, PackingAdd, SpecPriceForm, StoreEdit, StoreCur, \
-    AddBotForm, EditUserForm, AddSortsForm, AddProduct
+    AddBotForm, EditUserForm, AddSortsForm, AddProduct, EditSortsForm
 from datetime import datetime
 from app import app, db
 from flask_login import current_user, login_user, logout_user, login_required
@@ -376,6 +376,20 @@ def setting_city():
         form_area=form_area,
         citys=City.query.filter_by(store_id=current_user.store_id),
         areas=Area.query.filter_by(store_id=current_user.store_id)
+    )
+
+
+@app.route('/sort', methods=['GET', 'POST'])
+@login_required
+def sort():
+    form_sort_add = AddSortsForm()
+    form_sort_edit = EditSortsForm()
+    return render_template(
+        'sort.html',
+        form_sort_add=form_sort_add,
+        form_sort_edit=form_sort_edit,
+        sort=Sorts.query.filter_by(store_id=current_user.store_id),
+        title='Виды товара',
     )
 
 

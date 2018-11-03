@@ -127,7 +127,8 @@ class State(db.Model):
 
 class Sorts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(128), index=True, unique=True)
+    title = db.Column(db.String(128), index=True)
+    about = db.Column(db.String(500), index=True)
     product = db.relationship('Products', backref='sort', lazy='dynamic', cascade="all,delete")
     packing = db.relationship('Packing', backref='sort', lazy='dynamic', cascade="all,delete")
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
