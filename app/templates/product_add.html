@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+
+                 {{ wtf.quick_form(form_add) }}
+                    <script type="text/javascript">
+                        function choice_category(){
+                            var tmp_id = parseInt ($("#city_select").val());
+                            if(tmp_id == 0)
+                            {
+                                $("#area_select").attr('disabled', 'disabled');
+                            }
+                            else
+                            {
+                                $("#area_select").removeAttr('disabled');
+                                load_subcategory();
+                            }
+                        }
+
+                        function choice_category_sort(){
+                            var tmp_id = parseInt ($("#sort_select").val());
+                            if(tmp_id == 0)
+                            {
+                                $("#packing_select").attr('disabled', 'disabled');
+                            }
+                            else
+                            {
+                                $("#packing_select").removeAttr('disabled');
+                                load_subcategory_sort();
+                            }
+                        }
+
+                        function load_subcategory(){
+                            $.ajax({
+                                type: "POST",
+                                url: "/get_area_select",
+                                data: $('form').serialize(),
+                                success: function(response) {
+                                    var json = jQuery.parseJSON(response)
+                                    obj = Object.keys(json)
+
+                                    $("#area_select")
+                                        .find('option')
+                                        .remove()
+                                        .end()
+                                        .append('<option value="0">Не выбран</option>')
+                                        .val('0');
+
+                                    var value, key;
+                                    for(item in obj){
+                                        value = json[obj[item]];
+                                        key = obj[item];
+                                    $("#area_select").append($("<option></option>")
+                                            .attr("value",key)
+                                            .text(value));
+                                    }
+
+                                },
+                            error: function(error) {
+                                console.log(error);
+                            }
+                        });
+                        }
+                        function load_subcategory_sort(){
+                            $.ajax({
+                                type: "POST",
+                                url: "/get_packing_select",
+                                data: $('form').serialize(),
+                                success: function(response) {
+                                    var json = jQuery.parseJSON(response)
+                                    obj = Object.keys(json)
+
+                                    $("#packing_select")
+                                        .find('option')
+                                        .remove()
+                                        .end()
+                                        .append('<option value="0">Не выбран</option>')
+                                        .val('0');
+
+                                    var value, key;
+                                    for(item in obj){
+                                        value = json[obj[item]];
+                                        key = obj[item];
+                                    $("#packing_select").append($("<option></option>")
+                                            .attr("value",key)
+                                            .text(value));
+                                    }
+
+                                },
+                            error: function(error) {
+                                console.log(error);
+                            }
+                        });
+                        }
+
+                        $(document).ready(function() {
+                            choice_category();
+                            choice_category_sort();
+                            $("#city_select").change(function() {
+                                choice_category();
+                            });
+
+                            $("#area_select").change(function() {
+                            });
+                            $("#sort_select").change(function() {
+                                choice_category_sort();
+                            });
+                            $("#packing_select").change(function() {
+                            });
+                        });
+                    </script>
+
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+        /* Toggle between adding and removing the "active" class,
+        to highlight the button that controls the panel */
+        this.classList.toggle("active");
+
+        /* Toggle between hiding and showing the active panel */
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+        } else {
+            panel.style.display = "block";
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -161,9 +161,9 @@ def login():
     return render_template('login.html', title='Вход', form=form)
 
 
-@app.route('/product', methods=['GET', 'POST'])
+@app.route('/product_add', methods=['GET', 'POST'])
 @login_required
-def product():
+def product_add():
     form_add = AddProduct()
     if form_add.submit_product.data and form_add.add_mode.data == "1" and request.method == 'POST':
         product_add = Products(data=form_add.data_field.data,
@@ -174,7 +174,7 @@ def product():
         db.session.add(product_add)
         db.session.commit()
         flash('Товар добавлен')
-        return redirect(url_for('product'))
+        return redirect(url_for('product_add'))
     if form_add.submit_product.data and form_add.add_mode.data == "2" and request.method == 'POST':
         dataa = form_add.data_field.data.split('\n')
         for dat in dataa:
@@ -186,9 +186,9 @@ def product():
             db.session.add(product_add)
         db.session.commit()
         flash('Товар добавлен')
-        return redirect(url_for('product'))
+        return redirect(url_for('product_add'))
     return render_template(
-        'product.html',
+        'product_add.html',
         title='Адреса',
         products=Products.query.filter_by(store_id=current_user.store_id),
         form_add=form_add
@@ -384,6 +384,12 @@ def setting_city():
 def sort():
     form_sort_add = AddSortsForm()
     form_sort_edit = EditSortsForm()
+    if form_sort_add.submit_sort.data and request.method == 'POST':
+        new_sort = Sorts(title=form_sort_add.title.data, about=form_sort_add.about.data, store_id=current_user.store_id)
+        db.session.add(new_sort)
+        db.session.commit()
+        flash('Вид товара добавлен')
+        return redirect(url_for('sort'))
     return render_template(
         'sort.html',
         form_sort_add=form_sort_add,
@@ -396,7 +402,6 @@ def sort():
 @app.route('/setting_packing', methods=['GET', 'POST'])
 @login_required
 def setting_packing():
-    form_sort = AddSortsForm()
     form_packing = PackingAdd()
     form_spec_p = SpecPriceForm()
     form_spec_p.city.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id)]
@@ -404,15 +409,10 @@ def setting_packing():
     form_packing.units.choices = [(u.id, u.title) for u in Units.query.all()]
     form_packing.sort.choices = [(s.id, s.title) for s in Sorts.query.filter_by(store_id=current_user.store_id)]
     store_setting = Store.query.get(current_user.store_id)
-    if form_sort.submit_sort.data and request.method == 'POST':
-        new_sort = Sorts(title=form_sort.title.data, store_id=current_user.store_id)
-        db.session.add(new_sort)
-        db.session.commit()
-        flash('Вид товара добавлен')
-        return redirect(url_for('setting_packing'))
-    elif form_packing.submit_packing.data and request.method == 'POST':
+    if form_packing.submit_packing.data and request.method == 'POST':
         p_unit = Units.query.get(form_packing.units.data)
-        p_title = form_packing.weight.data + " " + str(p_unit)
+        p_sort = Sorts.query.get(form_packing.sort.data)
+        p_title = str(p_sort) + " " + form_packing.weight.data + " " + str(p_unit)
         packing = Packing(title=p_title, store_id=current_user.store_id, weight=form_packing.weight.data,
                           units=form_packing.units.data, price=form_packing.price.data, sorts_id=form_packing.sort.data)
         db.session.add(packing)
@@ -429,7 +429,6 @@ def setting_packing():
     return render_template(
         'setting_packing.html',
         form_packing=form_packing,
-        form_sort=form_sort,
         form_spec_p=form_spec_p,
         sort=Sorts.query.filter_by(store_id=current_user.store_id),
         spec_price=SpecPrice.query.filter_by(store_id=current_user.store_id),
@@ -488,7 +487,7 @@ def setting_bots():
     return render_template(
         'setting_robots.html',
         title='Боты',
-        bots=TelegramBot.query.filter_by(store_id=current_user.store_id),
+        bots=TelegramBot.querypro.filter_by(store_id=current_user.store_id),
         form_bot=form_bot,
         form_store=form_store
     )
@@ -500,15 +499,6 @@ def setting_transfer():
     return render_template(
         'index.html',
         title='Автовывод',
-    )
-
-
-@app.route('/product_add')
-@login_required
-def product_add():
-    return render_template(
-        'index.html',
-        title='Добавление товара',
     )
 
 

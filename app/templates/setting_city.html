@@ -52,16 +52,18 @@
                  <thead>
                     <tr>
                         <td>Города</td>
-                        <td></td>
+                        <td><ion-icon name="create"></ion-icon></td>
+                        <td><ion-icon name="trash"></ion-icon></td>
+                        <td><ion-icon name="locate"></ion-icon></td>
                     </tr>
                  </thead>
                  <tbody>
                     {% for city in citys %}
                     <tr>
                         <td>{{city.title}}</td>
-                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal"><ion-icon name="create"></ion-icon></button>
-                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal"><ion-icon name="trash"></ion-icon></button>
-                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#Area{{city.id}}"><ion-icon name="locate"></ion-icon></button></td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal"><ion-icon name="create"></ion-icon></button></td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal"><ion-icon name="trash"></ion-icon></button></td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#Area{{city.id}}"><ion-icon name="locate"></ion-icon></button></td>
                     </tr>
                     {% endfor %}
                      </tbody>

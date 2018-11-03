@@ -2,84 +2,131 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
 
-<div class="jumbotron jumbotron-fluid">
-  <div class="container">
-        <p class="lead">
             <hr>
-            <h5> Настройки товара и фасофки </h5>
+            <h5>Настройки фасовок и цен</h5>
             <hr>
-        <div id="accordion" role="tablist" aria-multiselectable="true">
-        {% for s in sort %}
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="heading{{s.id}}">
-              <h6 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{s.id}}" aria-expanded="false" aria-controls="collapse{{s.id}}">
-                  {{s.title}}
-                </a>
-              </h6>
+
+             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#AddPacking">
+                Добавить фасофку товара
+             </button>
+             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#AddSPrise">
+                Добавить спец цену
+             </button>
+
+            <hr>
+
+            <div class="modal fade" id="AddPacking" tabindex="-1" role="dialog" aria-labelledby="AddPackingLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="AddPackingLabel">Добавление фасофки</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    {{ wtf.quick_form(form_packing) }}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div id="collapse{{s.id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{s.id}}">
-            <table class="table table-sm table-condensed">
-                {% for p in packing %}
-                    {% if p.sorts_id == s.id %}
-                        <tr>
-                            <td>Фасофка: {{p.title}} {{ p.price }} {{ stcur }}</td>
-                            <td><a href="{{ url_for('remove_packing', del_packing_id=packing.id) }}" class="glyphicon glyphicon-remove"></a></td>
-                        </tr>
-                        {% for spec_p in spec_price %}
-                            {% if spec_p.packing_id == p.id and p.sorts_id == s.id%}
-                                <tr>
-                                        <td>Спец цена: {{ spec_p.city }} {{spec_p.spec_price}}</td>
-                                        <td><a href="{{ url_for('remove_spec_p', del_spec_p_id=spec_p.id) }}" class="glyphicon glyphicon-remove"></a></td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
+
+            <div class="modal fade" id="AddSPrise" tabindex="-1" role="dialog" aria-labelledby="AddSPriseLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="AddSPriseLabel">Добавление спец цены</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    {{ wtf.quick_form(form_spec_p) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+           <table class="table table-sm table-condensed">
+                <table id="table_packing" class="display">
+                 <thead>
+                    <tr>
+                        <td>Вид товара</td>
+                        <td>Кол-Во</td>
+                        <td>Ед измерения</td>
+                        <td>Цена</td>
+                        <td><ion-icon name="create"></ion-icon></td>
+                        <td><ion-icon name="trash"></ion-icon></td>
+                    </tr>
+                 </thead>
+                 <tbody>
+                    {% for p in packing %}
+                    <tr>
+                        <td>{{p.sort}}</td>
+                        <td>{{p.weight}}</td>
+                        <td>{{p.unit}}</td>
+                        <td>{{p.price}}</td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal"><ion-icon name="create"></ion-icon></button></td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal"><ion-icon name="trash"></ion-icon></button></td>
+                    </tr>
+                    {% endfor %}
+                     </tbody>
+                     <tfoot>
             </table>
-            </div>
-          </div>
-        {% endfor %}
+            <script type="text/javascript">
+                    $(document).ready(function() {
+                        $('#table_packing').dataTable( {
+                            "language": {
+                                "url": "//cdn.datatables.net/plug-ins/1.10.19/i18n/Russian.json"
+                            }
+                        } );
+                    } );
+            </script>
+<hr>
+<h5>Специальные цена для городов</h5>
+<hr>
+           <table class="table table-sm table-condensed">
+                <table id="table_sprice" class="display">
+                 <thead>
+                    <tr>
+                        <td>Вид товара</td>
+                        <td>Город</td>
+                        <td>Кол-Во</td>
+                        <td>Ед измерения</td>
+                        <td>Цена</td>
+                        <td><ion-icon name="create"></ion-icon></td>
+                        <td><ion-icon name="trash"></ion-icon></td>
+                    </tr>
+                 </thead>
+                 <tbody>
+                {% for p in packing %}
+                    {% for sp in spec_price %}
+                        {% if sp.packing_id == p.id %}
+                        <tr>
+                            <td>{{p.sort}}</td>
+                            <td>{{sp.city}}</td>
+                            <td>{{p.weight}}</td>
+                            <td>{{p.unit}}</td>
+                            <td>{{sp.spec_price}}</td>
+                            <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal"><ion-icon name="create"></ion-icon></button></td>
+                            <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal"><ion-icon name="trash"></ion-icon></button></td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                 {% endfor %}
+                     </tbody>
+                     <tfoot>
+            </table>
+            <script type="text/javascript">
+                    $(document).ready(function() {
+                        $('#table_sprice').dataTable( {
+                            "language": {
+                                "url": "//cdn.datatables.net/plug-ins/1.10.19/i18n/Russian.json"
+                            }
+                        } );
+                    } );
+            </script>
 
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingTwo">
-              <h6 class="panel-title">
-                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                  Добавление Вида товара
-                </a>
-              </h6>
-            </div>
-            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                {{ wtf.quick_form(form_sort) }}
-            </div>
-          </div>
 
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingThree">
-              <h6 class="panel-title">
-                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                  Добавление Фасофки для товара
-                </a>
-              </h6>
-            </div>
-            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                {{ wtf.quick_form(form_packing) }}
-            </div>
-          </div>
-          <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingFour">
-              <h6 class="panel-title">
-                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                  Добавление спец цены для города
-                </a>
-              </h6>
-            </div>
-            <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
-                {{ wtf.quick_form(form_spec_p) }}
-            </div>
-          </div>
-        </div>
-        </p>
-  </div>
-</div>
+
 {% endblock %}
