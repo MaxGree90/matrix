@@ -40,6 +40,8 @@ class Store(db.Model):
 
 class TelegramBot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    app_api_id = db.Column(db.String(64))
+    app_api_hash = db.Column(db.String(64))
     title = db.Column(db.String(64))
     phone_number = db.Column(db.String(64))
     help_chat = db.Column(db.String(64))
@@ -47,6 +49,17 @@ class TelegramBot(db.Model):
     password = db.Column(db.String(64))
     code = db.Column(db.String(64))
     status = db.Column(db.Integer, db.ForeignKey('botstate.id'))
+
+    def __repr__(self):
+        return format(self.phone_number)
+
+
+class AdvWallet(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mail = db.Column(db.String(64))
+    mail_password = db.Column(db.String(64))
+    wallet_password = db.Column(db.String(64))
+    name = db.Column(db.String(64))
 
     def __repr__(self):
         return format(self.phone_number)

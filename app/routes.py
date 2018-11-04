@@ -143,6 +143,15 @@ def remove_product(del_product_id):
     return redirect(url_for('product'))
 
 
+@app.route('/remove/<url_r>/<table>/<del_id>')
+@login_required
+def remove(url_r, table, del_id):
+    a = globals()[table]()
+    a.query.filter_by(id=del_id).delete()
+    db.session.commit()
+    return redirect(url_for(url_r))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -176,8 +185,10 @@ def product_add():
         flash('Товар добавлен')
         return redirect(url_for('product_add'))
     if form_add.submit_product.data and form_add.add_mode.data == "2" and request.method == 'POST':
-        dataa = form_add.data_field.data.split('\n')
+        dataa = form_add.data_field.data.split('\r\n\r\n')
         for dat in dataa:
+            if not dat.strip():
+                continue
             product_add = Products(data=dat,
                                    city_id=form_add.city_select.data, area_id=form_add.area_select.data,
                                    sort_id=form_add.sort_select.data, packing_id=form_add.packing_select.data,
@@ -185,7 +196,7 @@ def product_add():
                                    user_id=current_user.id, create_date=datetime.utcnow())
             db.session.add(product_add)
         db.session.commit()
-        flash('Товар добавлен')
+        flash('Товары добавлен')
         return redirect(url_for('product_add'))
     return render_template(
         'product_add.html',
@@ -505,9 +516,11 @@ def setting_transfer():
 @app.route('/product_in_trade')
 @login_required
 def product_in_trade():
+    product_in_trade = Products.query.filter_by(store_id=current_user.store_id, state_id=1)
     return render_template(
-        'index.html',
+        'intrade.html',
         title='В продаже',
+        product_in_trade=product_in_trade,
     )
 
 
