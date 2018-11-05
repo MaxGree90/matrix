@@ -52,7 +52,6 @@
                  <thead>
                     <tr>
                         <td>Города</td>
-                        <td><ion-icon name="create"></ion-icon></td>
                         <td><ion-icon name="trash"></ion-icon></td>
                         <td><ion-icon name="locate"></ion-icon></td>
                     </tr>
@@ -61,8 +60,7 @@
                     {% for city in citys %}
                     <tr>
                         <td>{{city.title}}</td>
-                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal"><ion-icon name="create"></ion-icon></button></td>
-                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal"><ion-icon name="trash"></ion-icon></button></td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#CityRemove{{city.id}}"><ion-icon name="trash"></ion-icon></button></td>
                         <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#Area{{city.id}}"><ion-icon name="locate"></ion-icon></button></td>
                     </tr>
                     {% endfor %}
@@ -80,6 +78,25 @@
             </script>
 
            {% for city in citys %}
+           <div class="modal fade" id="CityRemove{{city.id}}" tabindex="-1" role="dialog" aria-labelledby="CityRemove{{city.id}}Label" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="CityRemove{{city.id}}Label">Удаление</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      Подтвердите удаление города: {{city.title}}
+                  </div>
+                  <div class="modal-footer">
+                      <a href="{{ url_for('remove', url_r='setting_city', table='City', del_id=city.id)  }}" class="btn btn-danger btn-xs" role="button">Удалить</a>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
            <div class="modal fade" id="Area{{city.id}}" tabindex="-1" role="dialog" aria-labelledby="AreaLabel{{city.id}}" aria-hidden="true">
               <div class="modal-dialog" role="document">
@@ -101,10 +118,29 @@
                         <tbody>
                             {% for area in areas %}
                                 {% if area.city_id == city.id %}
+                               <div class="modal fade" id="AreaRemove{{area.id}}" tabindex="-1" role="dialog" aria-labelledby="AreaRemove{{area.id}}Label" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="AreaRemove{{area.id}}Label">Удаление</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          Подтвердите удаление района: {{area.title}}
+                                      </div>
+                                      <div class="modal-footer">
+                                          <a href="{{ url_for('remove', url_r='setting_city', table='Area', del_id=area.id)  }}" class="btn btn-danger btn-xs" role="button">Удалить</a>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
                                    <tr>
                                        <td>{{area.title}}</td>
-                                       <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal"><ion-icon name="create"></ion-icon></button>
-                                       <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal"><ion-icon name="trash"></ion-icon></button></td>
+                                       <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#AreaRemove{{area.id}}"><ion-icon name="trash"></ion-icon></button></td>
                                    </tr>
                                 {% endif %}
                             {% endfor %}

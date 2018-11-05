@@ -18,7 +18,7 @@
                     </tr>
                  </thead>
                  <tbody>
-                    {% for p in product_in_trade %}
+                    {% for p in prod_in_trade %}
                     <tr>
                         <td>{{p.data}}</td>
                         <td>{{p.create_date}}</td>
@@ -41,7 +41,7 @@
             </script>
 
 
-           {% for p in product_in_trade %}
+           {% for p in prod_in_trade %}
             <div class="modal fade" id="Pdel{{p.id}}" tabindex="-1" role="dialog" aria-labelledby="Pdel{{p.id}}Label" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -52,10 +52,10 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                      Подтвердите удаление {{p.data}} созданного {{p.create_date}} пользователем {{p.user}}
+                      Подтвердите удаление: {{p.data}} <hr> Дата создания: {{p.create_date}} <hr> Создатель: {{p.user}}
                   </div>
                   <div class="modal-footer">
-                      <a href="{{ url_for('remove', url_r='product_in_trade', table='Products', del_id=p.id)  }}" class="btn btn-warning btn-xs" role="button">Удалить</a>
+                      <a href="{{ url_for('remove', url_r='product_in_trade', table='Products', del_id=p.id)  }}" class="btn btn-danger btn-xs" role="button">Удалить</a>
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
                   </div>
                 </div>

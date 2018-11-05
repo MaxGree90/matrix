@@ -55,7 +55,6 @@
                         <td>Кол-Во</td>
                         <td>Ед измерения</td>
                         <td>Цена</td>
-                        <td><ion-icon name="create"></ion-icon></td>
                         <td><ion-icon name="trash"></ion-icon></td>
                     </tr>
                  </thead>
@@ -66,8 +65,7 @@
                         <td>{{p.weight}}</td>
                         <td>{{p.unit}}</td>
                         <td>{{p.price}}</td>
-                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal"><ion-icon name="create"></ion-icon></button></td>
-                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal"><ion-icon name="trash"></ion-icon></button></td>
+                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#PRemove{{p.id}}"><ion-icon name="trash"></ion-icon></button></td>
                     </tr>
                     {% endfor %}
                      </tbody>
@@ -82,6 +80,27 @@
                         } );
                     } );
             </script>
+           {% for p in packing %}
+            <div class="modal fade" id="PRemove{{p.id}}" tabindex="-1" role="dialog" aria-labelledby="PRemove{{p.id}}Label" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="PRemove{{p.id}}Label">Удаление</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      Подтвердите удаление фасофки: {{p.sort}} {{p.weight}} {{p.unit}} {{p.price}}
+                  </div>
+                  <div class="modal-footer">
+                      <a href="{{ url_for('remove', url_r='setting_packing', table='Packing', del_id=p.id)  }}" class="btn btn-danger btn-xs" role="button">Удалить</a>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+           {%endfor%}
 <hr>
 <h5>Специальные цена для городов</h5>
 <hr>
@@ -94,7 +113,6 @@
                         <td>Кол-Во</td>
                         <td>Ед измерения</td>
                         <td>Цена</td>
-                        <td><ion-icon name="create"></ion-icon></td>
                         <td><ion-icon name="trash"></ion-icon></td>
                     </tr>
                  </thead>
@@ -108,8 +126,7 @@
                             <td>{{p.weight}}</td>
                             <td>{{p.unit}}</td>
                             <td>{{sp.spec_price}}</td>
-                            <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditModal"><ion-icon name="create"></ion-icon></button></td>
-                            <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveModal"><ion-icon name="trash"></ion-icon></button></td>
+                            <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#SpRemove{{sp.id}}"><ion-icon name="trash"></ion-icon></button></td>
                         </tr>
                         {% endif %}
                     {% endfor %}
@@ -126,7 +143,30 @@
                         } );
                     } );
             </script>
-
-
+            {% for p in packing %}
+               {% for sp in spec_price %}
+                        {% if sp.packing_id == p.id %}
+                            <div class="modal fade" id="SpRemove{{sp.id}}" tabindex="-1" role="dialog" aria-labelledby="SpRemove{{sp.id}}Label" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="SpRemove{{sp.id}}Label">Удаление</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                      Подтвердите удаление спец цены: {{p.sort}} {{sp.city}} {{p.weight}} {{p.unit}} {{sp.spec_price}}
+                                  </div>
+                                  <div class="modal-footer">
+                                      <a href="{{ url_for('remove', url_r='setting_packing', table='SpecPrice', del_id=sp.id)  }}" class="btn btn-danger btn-xs" role="button">Удалить</a>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+            {%endfor%}
 
 {% endblock %}

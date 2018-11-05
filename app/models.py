@@ -33,6 +33,9 @@ class Store(db.Model):
     reservation_time = db.Column(db.String(2))
     display_qg = db.Column(db.Boolean, unique=False, default=False)
     currency = db.Column(db.Integer, db.ForeignKey('currency.id'))
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -49,6 +52,9 @@ class TelegramBot(db.Model):
     password = db.Column(db.String(64))
     code = db.Column(db.String(64))
     status = db.Column(db.Integer, db.ForeignKey('botstate.id'))
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.phone_number)
@@ -60,6 +66,9 @@ class AdvWallet(db.Model):
     mail_password = db.Column(db.String(64))
     wallet_password = db.Column(db.String(64))
     name = db.Column(db.String(64))
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.phone_number)
@@ -72,6 +81,9 @@ class City(db.Model):
     product = db.relationship('Products', backref='city', lazy='dynamic', cascade="all,delete")
     area = db.relationship('Area', backref='city', lazy='dynamic', cascade="all,delete")
     spec_price = db.relationship('SpecPrice', backref='city', lazy='dynamic', cascade="all,delete")
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -83,6 +95,9 @@ class Area(db.Model):
     city_id = db.Column(db.Integer, db.ForeignKey('city.id'))
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
     product = db.relationship('Products', backref='area', lazy='dynamic', cascade="all,delete")
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -92,6 +107,9 @@ class Units(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64), index=True, unique=True)
     packing = db.relationship('Packing', backref='unit', lazy='dynamic', cascade="all,delete")
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -107,6 +125,9 @@ class Packing(db.Model):
     price = db.Column(db.Float)
     spec_price = db.relationship('SpecPrice', backref='packing', lazy='dynamic', cascade="all,delete")
     product = db.relationship('Products', backref='packing', lazy='dynamic', cascade="all,delete")
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -118,12 +139,18 @@ class SpecPrice(db.Model):
     spec_price = db.Column(db.Float)
     city_id = db.Column(db.Integer, db.ForeignKey('city.id'))
     packing_id = db.Column(db.Integer, db.ForeignKey('packing.id'))
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
 
 class Botstate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), index=True, unique=True)
     bot = db.relationship('TelegramBot', backref='botstat', lazy='dynamic', cascade="all,delete")
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -133,6 +160,9 @@ class State(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), index=True, unique=True)
     product = db.relationship('Products', backref='state', lazy='dynamic', cascade="all,delete")
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -145,6 +175,9 @@ class Sorts(db.Model):
     product = db.relationship('Products', backref='sort', lazy='dynamic', cascade="all,delete")
     packing = db.relationship('Packing', backref='sort', lazy='dynamic', cascade="all,delete")
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -153,7 +186,7 @@ class Sorts(db.Model):
 class Products(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     city_id = db.Column(db.Integer, db.ForeignKey('city.id'))
-    area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=True)
     sort_id = db.Column(db.Integer, db.ForeignKey('sorts.id'))
     packing_id = db.Column(db.Integer, db.ForeignKey('packing.id'))
     data = db.Column(db.Text)
@@ -162,6 +195,9 @@ class Products(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
     create_date = db.Column(db.DateTime)
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.description)
@@ -172,6 +208,9 @@ class Score(db.Model):
     balance = db.Column(db.Float)
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.id'))
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -183,6 +222,9 @@ class Currency(db.Model):
     code_int = db.Column(db.String(3), index=True, unique=True)
     score = db.relationship('Score', backref='currency', lazy='dynamic', cascade="all,delete")
     store = db.relationship('Store', backref='cur', lazy='dynamic', cascade="all,delete")
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.code_abc)
@@ -192,6 +234,9 @@ class Position(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64), index=True, unique=True)
     users = db.relationship('User', backref='position', lazy='dynamic', cascade="all,delete")
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.title)
@@ -210,6 +255,9 @@ class User(UserMixin, db.Model):
     about = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     mail = db.Column(db.String(140), index=True, unique=True)
+    deletion = db.Column(db.Boolean, default=False)
+    deletion_date = db.Column(db.DateTime)
+    deletion_user = db.Column(db.Integer)
 
     def __repr__(self):
         return format(self.username)

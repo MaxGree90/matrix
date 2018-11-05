@@ -79,76 +79,15 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/remove_area/<del_area_id>')
-@login_required
-def remove_area(del_area_id):
-    Area.query.filter_by(id=del_area_id).delete()
-    db.session.commit()
-    return redirect(url_for('setting_city'))
-
-
-@app.route('/remove_city/<del_city_id>')
-@login_required
-def remove_city(del_city_id):
-    City.query.filter_by(id=del_city_id).delete()
-    db.session.commit()
-    return redirect(url_for('setting_city'))
-
-
-@app.route('/remove_sort/<del_sort_id>')
-@login_required
-def remove_sort(del_sort_id):
-    Sorts.query.filter_by(id=del_sort_id).delete()
-    db.session.commit()
-    return redirect(url_for('setting'))
-
-
-@app.route('/remove_packing/<del_packing_id>')
-@login_required
-def remove_packing(del_packing_id):
-    Packing.query.filter_by(id=del_packing_id).delete()
-    db.session.commit()
-    return redirect(url_for('setting'))
-
-
-@app.route('/remove_spec_p/<del_spec_p_id>')
-@login_required
-def remove_spec_p(del_spec_p_id):
-    SpecPrice.query.filter_by(id=del_spec_p_id).delete()
-    db.session.commit()
-    return redirect(url_for('setting'))
-
-
-@app.route('/remove_user/<del_user_id>')
-@login_required
-def remove_user(del_user_id):
-    User.query.filter_by(id=del_user_id).delete()
-    db.session.commit()
-    return redirect(url_for('setting'))
-
-
-@app.route('/remove_bot/<del_bot_id>')
-@login_required
-def remove_bot(del_bot_id):
-    TelegramBot.query.filter_by(id=del_bot_id).delete()
-    db.session.commit()
-    return redirect(url_for('setting'))
-
-
-@app.route('/remove_product/<del_product_id>')
-@login_required
-def remove_product(del_product_id):
-    Products.query.filter_by(id=del_product_id).delete()
-    db.session.commit()
-    return redirect(url_for('product'))
-
-
 @app.route('/remove/<url_r>/<table>/<del_id>')
 @login_required
 def remove(url_r, table, del_id):
-    a = globals()[table]()
-    a.query.filter_by(id=del_id).delete()
+    remove_object = globals()[table]().query.filter_by(id=del_id).first()
+    remove_object.deletion = True
+    remove_object.deletion_date = datetime.utcnow()
+    remove_object.deletion_user = current_user.id
     db.session.commit()
+    flash('Удалён')
     return redirect(url_for(url_r))
 
 
@@ -160,7 +99,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash('Неверное имя пользователя или пароль')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -175,33 +114,48 @@ def login():
 def product_add():
     form_add = AddProduct()
     if form_add.submit_product.data and form_add.add_mode.data == "1" and request.method == 'POST':
-        product_add = Products(data=form_add.data_field.data,
-                               city_id=form_add.city_select.data, area_id=form_add.area_select.data,
-                               sort_id=form_add.sort_select.data, packing_id=form_add.packing_select.data,
-                               store_id=current_user.store_id, state_id="1",
-                               user_id=current_user.id, create_date=datetime.utcnow())
-        db.session.add(product_add)
+        packing = Packing.query.filter_by(id=form_add.packing_select.data).first()
+        packing_sort = packing.sorts_id
+        if form_add.area_select.data == "0":
+            prod_add = Products(data=form_add.data_field.data, city_id=form_add.city_select.data,
+                                sort_id=packing_sort,
+                                packing_id=form_add.packing_select.data, store_id=current_user.store_id, state_id="1",
+                                user_id=current_user.id, create_date=datetime.utcnow())
+        else:
+            prod_add = Products(data=form_add.data_field.data, city_id=form_add.city_select.data, area_id=form_add.area_select.data,
+                                sort_id=packing_sort, packing_id=form_add.packing_select.data,
+                                store_id=current_user.store_id, state_id="1",
+                                user_id=current_user.id, create_date=datetime.utcnow())
+        db.session.add(prod_add)
         db.session.commit()
         flash('Товар добавлен')
         return redirect(url_for('product_add'))
-    if form_add.submit_product.data and form_add.add_mode.data == "2" and request.method == 'POST':
+    elif form_add.submit_product.data and form_add.add_mode.data == "2" and request.method == 'POST':
+        packing = Packing.query.filter_by(id=form_add.packing_select.data, deletion=False).first()
+        packing_sort = packing.sorts_id
         dataa = form_add.data_field.data.split('\r\n\r\n')
         for dat in dataa:
             if not dat.strip():
                 continue
-            product_add = Products(data=dat,
-                                   city_id=form_add.city_select.data, area_id=form_add.area_select.data,
-                                   sort_id=form_add.sort_select.data, packing_id=form_add.packing_select.data,
-                                   store_id=current_user.store_id, state_id="1",
-                                   user_id=current_user.id, create_date=datetime.utcnow())
-            db.session.add(product_add)
+            else:
+                if form_add.area_select.data == "0":
+                    prod_add = Products(data=dat, city_id=form_add.city_select.data,
+                                        sort_id=packing_sort, packing_id=form_add.packing_select.data,
+                                        store_id=current_user.store_id, state_id="1", user_id=current_user.id,
+                                        create_date=datetime.utcnow())
+                else:
+                    prod_add = Products(data=dat, city_id=form_add.city_select.data, area_id=form_add.area_select.data,
+                                        sort_id=packing_sort, packing_id=form_add.packing_select.data,
+                                        store_id=current_user.store_id, state_id="1",
+                                        user_id=current_user.id, create_date=datetime.utcnow())
+            db.session.add(prod_add)
         db.session.commit()
-        flash('Товары добавлен')
+        flash('Товары добавлены')
         return redirect(url_for('product_add'))
     return render_template(
         'product_add.html',
         title='Адреса',
-        products=Products.query.filter_by(store_id=current_user.store_id),
+        products=Products.query.filter_by(store_id=current_user.store_id, deletion=False),
         form_add=form_add
     )
 
@@ -210,7 +164,7 @@ def product_add():
 @login_required
 def get_area_select():
     city_id = request.form['city_select']
-    item_list = Area.query.filter_by(city_id=city_id).all()
+    item_list = Area.query.filter_by(city_id=city_id, deletion=False).all()
     result_list = dict()
     for item in item_list:
         result_list[item.id] = item.title
@@ -221,7 +175,7 @@ def get_area_select():
 @login_required
 def get_packing_select():
     sorts_id = request.form['sort_select']
-    item_list = Packing.query.filter_by(sorts_id=sorts_id).all()
+    item_list = Packing.query.filter_by(sorts_id=sorts_id, deletion=False).all()
     result_list = dict()
     for item in item_list:
         result_list[item.id] = item.title
@@ -232,134 +186,11 @@ def get_packing_select():
 @login_required
 def get_users():
     sorts_id = request.form['sort_select']
-    item_list = Packing.query.filter_by(sorts_id=sorts_id).all()
+    item_list = Packing.query.filter_by(sorts_id=sorts_id, deletion=False).all()
     result_list = dict()
     for item in item_list:
         result_list[item.id] = item.title
     return json.dumps(result_list)
-
-
-@app.route('/setting', methods=['GET', 'POST'])
-@login_required
-def setting():
-    form_city = CityAdd()
-    form_area = AreaAdd()
-    form_packing = PackingAdd()
-    form_spec_p = SpecPriceForm()
-    form_store = StoreEdit()
-    form_user = AddUserForm()
-    form_bot = AddBotForm()
-    form_sort = AddSortsForm()
-    form_packing.sort.choices = [(s.id, s.title) for s in Sorts.query.filter_by(store_id=current_user.store_id)]
-    form_user.position.choices = [(p.id, p.title) for p in Position.query.all()]
-    form_spec_p.city.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id)]
-    form_spec_p.pac.choices = [(p.id, p.title) for p in Packing.query.filter_by(store_id=current_user.store_id)]
-    form_packing.units.choices = [(u.id, u.title) for u in Units.query.all()]
-    form_area.city_name.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id)]
-    form_select_cur = StoreCur()
-    form_select_cur.сur_st.choices = [(cur.id, cur.code_abc) for cur in Currency.query.all()]
-    if form_city.submit_city.data and form_city.validate() and request.method == 'POST':
-        city = City(title=form_city.title_city.data, store_id=current_user.store_id)
-        db.session.add(city)
-        db.session.commit()
-        flash('Город добавлен')
-        return redirect(url_for('setting'))
-    elif form_sort.submit_sort.data and request.method == 'POST':
-        new_sort = Sorts(title=form_sort.title.data, store_id=current_user.store_id)
-        db.session.add(new_sort)
-        db.session.commit()
-        flash('Вид товара добавлен')
-        return redirect(url_for('setting'))
-    elif form_bot.submit_bot.data and request.method == 'POST':
-        new_bot = TelegramBot(phone_number=form_bot.phone_num.data, password=form_bot.password.data,
-                              code=form_bot.code.data, store_id=current_user.store_id)
-        db.session.add(new_bot)
-        db.session.commit()
-        flash('Бот добавлен')
-        return redirect(url_for('setting'))
-    elif form_user.submit.data and request.method == 'POST':
-        new_user = User(username=form_user.username.data, password=form_user.password.data,
-                        store_id=current_user.store_id, position_id=form_user.position.data, about=form_user.about.data,
-                        mail=form_user.mail.data)
-        new_user.set_password(form_user.password.data)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Пользователь добавлен')
-        return redirect(url_for('setting'))
-    elif form_select_cur.submit_cur_st.data and request.method == 'POST':
-        select_cur = Store(currency=form_select_cur.сur_st.data)
-        db.session.add(select_cur)
-        db.session.commit()
-        flash('Валюта магазина изменена')
-        return redirect(url_for('setting'))
-    elif form_area.submit_area.data and request.method == 'POST':
-        area = Area(title=form_area.title_area.data, city_id=form_area.city_name.data)
-        db.session.add(area)
-        db.session.commit()
-        flash('Район добавлен')
-        return redirect(url_for('setting'))
-    elif form_packing.submit_packing.data and request.method == 'POST':
-        ss = Store.query.get(current_user.store_id)
-        p_unit = Units.query.get(form_packing.units.data)
-        p_title = form_packing.weight.data + " " + str(p_unit)
-        packing = Packing(title=p_title, store_id=current_user.store_id, weight=form_packing.weight.data,
-                          units=form_packing.units.data, price=form_packing.price.data, sorts_id=form_packing.sort.data)
-        db.session.add(packing)
-        db.session.commit()
-        flash('Фасофка добавлена')
-        return redirect(url_for('setting'))
-    elif form_spec_p.submit_sp.data and request.method == 'POST':
-        spec_price = SpecPrice(store_id=current_user.store_id, spec_price=form_spec_p.spec_price.data,
-                               city_id=form_spec_p.city.data, packing_id=form_spec_p.pac.data)
-        db.session.add(spec_price)
-        db.session.commit()
-        flash('Спец цена добавлена')
-        return redirect(url_for('setting'))
-    elif form_store.submit_st.data and request.method == 'POST':
-        store_setting = Store.query.get(current_user.store_id)
-        store_setting.title = form_store.title_store.data
-        store_setting.first_message = form_store.first_message.data
-        store_setting.help_message = form_store.help_message.data
-        store_setting.footer_message = form_store.footer_message.data
-        store_setting.help_chat = form_store.help_chat.data
-        store_setting.store_www = form_store.store_www.data
-        store_setting.qiwi_unblock = form_store.qiwi_unblock.data
-        db.session.commit()
-        flash('Настройки магазина обновлены')
-        return redirect(url_for('setting'))
-    elif request.method == 'GET':
-        store_setting = Store.query.get(current_user.store_id)
-        form_store.title_store.data = store_setting.title
-        form_store.first_message.data = store_setting.first_message
-        form_store.help_message.data = store_setting.help_message
-        form_store.footer_message.data = store_setting.footer_message
-        form_store.help_chat.data = store_setting.help_chat
-        form_store.store_www.data = store_setting.store_www
-        form_store.qiwi_unblock.data = store_setting.qiwi_unblock
-    return render_template(
-        'setting.html',
-        title='Настройки',
-        year=datetime.now().year,
-        store_setting=Store.query.get(current_user.store_id),
-        citys=City.query.filter_by(store_id=current_user.store_id),
-        users=User.query.filter_by(store_id=current_user.store_id),
-        areas=Area.query.all(),
-        form_city=form_city,
-        form_area=form_area,
-        form_packing=form_packing,
-        form_spec_p=form_spec_p,
-        form_store=form_store,
-        form_select_cur=form_select_cur,
-        form_bot=form_bot,
-        form_user=form_user,
-        form_sort=form_sort,
-        packings=Packing.query.filter_by(store_id=current_user.store_id),
-        spec_prices=SpecPrice.query.filter_by(store_id=current_user.store_id),
-        stcur=store_setting.cur,
-        bots=TelegramBot.query.filter_by(store_id=current_user.store_id),
-        sorts=Sorts.query.filter_by(store_id=current_user.store_id),
-        city=City.query.filter_by(store_id=current_user.store_id)
-    )
 
 
 @app.route('/setting_city', methods=['GET', 'POST'])
@@ -367,7 +198,8 @@ def setting():
 def setting_city():
     form_city = CityAdd()
     form_area = AreaAdd()
-    form_area.city_name.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id)]
+    form_area.city_name.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id,
+                                                                                 deletion=False)]
     if form_city.submit_city.data and form_city.validate() and request.method == 'POST':
         city = City(title=form_city.title_city.data, store_id=current_user.store_id)
         db.session.add(city)
@@ -385,8 +217,8 @@ def setting_city():
         title='Города',
         form_city=form_city,
         form_area=form_area,
-        citys=City.query.filter_by(store_id=current_user.store_id),
-        areas=Area.query.filter_by(store_id=current_user.store_id)
+        citys=City.query.filter_by(store_id=current_user.store_id, deletion=False),
+        areas=Area.query.filter_by(store_id=current_user.store_id, deletion=False)
     )
 
 
@@ -405,7 +237,7 @@ def sort():
         'sort.html',
         form_sort_add=form_sort_add,
         form_sort_edit=form_sort_edit,
-        sort=Sorts.query.filter_by(store_id=current_user.store_id),
+        sort=Sorts.query.filter_by(store_id=current_user.store_id, deletion=False),
         title='Виды товара',
     )
 
@@ -415,10 +247,13 @@ def sort():
 def setting_packing():
     form_packing = PackingAdd()
     form_spec_p = SpecPriceForm()
-    form_spec_p.city.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id)]
-    form_spec_p.pac.choices = [(p.id, p.title) for p in Packing.query.filter_by(store_id=current_user.store_id)]
+    form_spec_p.city.choices = [(c.id, c.title) for c in City.query.filter_by(store_id=current_user.store_id,
+                                                                              deletion=False)]
+    form_spec_p.pac.choices = [(p.id, p.title) for p in Packing.query.filter_by(store_id=current_user.store_id,
+                                                                                deletion=False)]
     form_packing.units.choices = [(u.id, u.title) for u in Units.query.all()]
-    form_packing.sort.choices = [(s.id, s.title) for s in Sorts.query.filter_by(store_id=current_user.store_id)]
+    form_packing.sort.choices = [(s.id, s.title) for s in Sorts.query.filter_by(store_id=current_user.store_id,
+                                                                                deletion=False)]
     store_setting = Store.query.get(current_user.store_id)
     if form_packing.submit_packing.data and request.method == 'POST':
         p_unit = Units.query.get(form_packing.units.data)
@@ -441,9 +276,9 @@ def setting_packing():
         'setting_packing.html',
         form_packing=form_packing,
         form_spec_p=form_spec_p,
-        sort=Sorts.query.filter_by(store_id=current_user.store_id),
-        spec_price=SpecPrice.query.filter_by(store_id=current_user.store_id),
-        packing=Packing.query.filter_by(store_id=current_user.store_id),
+        sort=Sorts.query.filter_by(store_id=current_user.store_id, deletion=False),
+        spec_price=SpecPrice.query.filter_by(store_id=current_user.store_id, deletion=False),
+        packing=Packing.query.filter_by(store_id=current_user.store_id, deletion=False),
         title='Фасофка',
         stcur=store_setting.cur
     )
@@ -474,10 +309,12 @@ def setting_users():
         edit_user.mail = form_user_edit.mail.data
         flash('Пользователь изменён')
         return redirect(url_for('setting_users'))
+    elif request.method == "GET":
+        form_user_edit.username.data = "123123"
     return render_template(
         'setting_users.html',
         title='Сотрудники',
-        users=User.query.filter_by(store_id=current_user.store_id),
+        users=User.query.filter_by(store_id=current_user.store_id, deletion=False),
         form_user=form_user,
         form_user_edit=form_user_edit,
     )
@@ -487,9 +324,10 @@ def setting_users():
 @login_required
 def setting_bots():
     form_bot = AddBotForm()
-    form_store=StoreEdit()
+    form_store = StoreEdit()
     if form_bot.submit_bot.data and request.method == 'POST':
-        new_bot = TelegramBot(phone_number=form_bot.phone_num.data, store_id=current_user.store_id, code=form_bot.code.data)
+        new_bot = TelegramBot(phone_number=form_bot.phone_num.data, store_id=current_user.store_id,
+                              code=form_bot.code.data)
         db.session.add(new_bot)
         db.session.commit()
         flash('Телеграмм бот добавлен')
@@ -498,7 +336,7 @@ def setting_bots():
     return render_template(
         'setting_robots.html',
         title='Боты',
-        bots=TelegramBot.querypro.filter_by(store_id=current_user.store_id),
+        bots=TelegramBot.querypro.filter_by(store_id=current_user.store_id, deletion=False),
         form_bot=form_bot,
         form_store=form_store
     )
@@ -516,11 +354,11 @@ def setting_transfer():
 @app.route('/product_in_trade')
 @login_required
 def product_in_trade():
-    product_in_trade = Products.query.filter_by(store_id=current_user.store_id, state_id=1)
+    prod_in_trade = Products.query.filter_by(store_id=current_user.store_id, state_id=1, deletion=False)
     return render_template(
         'intrade.html',
         title='В продаже',
-        product_in_trade=product_in_trade,
+        prod_in_trade=prod_in_trade,
     )
 
 

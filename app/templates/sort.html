@@ -33,7 +33,6 @@
                     <tr>
                         <td>Название</td>
                         <td>Описание</td>
-                        <td><ion-icon name="create"></ion-icon></td>
                         <td><ion-icon name="trash"></ion-icon></td>
                     </tr>
                  </thead>
@@ -42,7 +41,6 @@
                     <tr>
                         <td>{{s.title}}</td>
                         <td>{{s.about}}</td>
-                        <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#EditSort{{s.id}}"><ion-icon name="create"></ion-icon></button></td>
                         <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#RemoveSort{{s.id}}"><ion-icon name="trash"></ion-icon></button></td>
                     </tr>
                     {% endfor %}
@@ -59,4 +57,26 @@
                     } );
                 </script>
 
+
+                    {% for s in sort %}
+                    <div class="modal fade" id="RemoveSort{{s.id}}" tabindex="-1" role="dialog" aria-labelledby="RemoveSort{{s.id}}Label" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="RemoveSort{{s.id}}Label">Удаление</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              Подтвердите удаление {{s.data}}
+                          </div>
+                          <div class="modal-footer">
+                              <a href="{{ url_for('remove', url_r='sort', table='Sorts', del_id=s.id)  }}" class="btn btn-danger btn-xs" role="button">Удалить</a>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
 {% endblock %}
